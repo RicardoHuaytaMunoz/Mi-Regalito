@@ -18,138 +18,129 @@
   <!-- Fondo animado sutil -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="heartBg"></div>
 
-  <!-- REPRODUCTOR FLOTANTE TIPO VINILO -->
-  <div class="fixed top-4 right-4 z-50">
-    <div class="player-card backdrop-blur-md bg-white/20 border border-white/30 rounded-3xl p-3 sm:p-4 shadow-2xl flex flex-col items-center w-44 sm:w-56 text-slate-800">
+  <!-- REPRODUCTOR FLOTANTE TIPO VINILO (COMPACTO EN CELULARES) -->
+  <div class="fixed top-2 right-2 sm:top-4 sm:right-4 z-50">
+    <div class="player-card backdrop-blur-md bg-white/40 border border-white/40 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-xl flex flex-col items-center w-36 sm:w-52 text-slate-800 transition-all">
       
-      <!-- Tocadiscos / Vinilo giratorio -->
-      <div class="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center mb-2 sm:mb-3">
-        <!-- Brazo de la aguja -->
+      <!-- Tocadiscos / Vinilo -->
+      <div class="relative w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center mb-1.5 sm:mb-2">
         <div id="turntableArm" class="tonearm"></div>
-        
-        <!-- Disco de vinilo -->
-        <div id="vinylDisk" class="vinyl w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-xl flex items-center justify-center">
-          <!-- Carátula central del vinilo -->
-          <div id="trackCover" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-cover bg-center border-2 border-slate-900 shadow-inner"></div>
+        <div id="vinylDisk" class="vinyl w-14 h-14 sm:w-20 sm:h-20 rounded-full shadow-lg flex items-center justify-center">
+          <div id="trackCover" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-cover bg-center border border-slate-900 shadow-inner"></div>
         </div>
       </div>
 
-      <!-- Info de la Canción -->
-      <div class="text-center w-full px-2 mb-2">
-        <h4 id="trackTitle" class="text-xs font-bold text-slate-800 truncate">Cargando...</h4>
-        <p id="trackArtist" class="text-[10px] text-slate-600 truncate">Música</p>
+      <!-- Info Canción -->
+      <div class="text-center w-full px-1 mb-1">
+        <h4 id="trackTitle" class="text-[11px] sm:text-xs font-bold text-slate-800 truncate">Cargando...</h4>
+        <p id="trackArtist" class="text-[9px] sm:text-[10px] text-slate-500 truncate">Música</p>
       </div>
 
-      <!-- Barra de progreso y tiempos -->
-      <div class="w-full px-1 space-y-1">
-        <div class="w-full bg-white/40 h-1 rounded-full overflow-hidden cursor-pointer" onclick="seekAudio(event)">
-          <div id="audioProgress" class="bg-rose-500 h-full w-0 transition-all duration-200"></div>
+      <!-- Barra de progreso -->
+      <div class="w-full px-1 space-y-0.5 sm:space-y-1">
+        <div class="w-full bg-slate-200/70 h-1 rounded-full overflow-hidden cursor-pointer" onclick="seekAudio(event)">
+          <div id="audioProgress" class="bg-rose-500 h-full w-0 transition-all duration-150"></div>
         </div>
-        <div class="flex justify-between text-[9px] text-slate-500 font-medium">
+        <div class="flex justify-between text-[8px] sm:text-[9px] text-slate-400 font-medium">
           <span id="currentTime">0:00</span>
           <span id="totalDuration">0:00</span>
         </div>
       </div>
 
-      <!-- Controles Multimedia -->
-      <div class="flex items-center justify-center gap-3 sm:gap-4 mt-2 text-slate-700">
-        <button onclick="prevTrack()" class="hover:text-rose-600 transition text-xs">
+      <!-- Controles -->
+      <div class="flex items-center justify-center gap-2 sm:gap-4 mt-1.5 text-slate-700">
+        <button onclick="prevTrack()" class="hover:text-rose-600 transition text-[10px] sm:text-xs p-1">
           <i class="fa-solid fa-backward-step"></i>
         </button>
-        <button onclick="togglePlay()" id="playBtn" class="w-8 h-8 rounded-full bg-white/70 hover:bg-white text-rose-500 shadow-sm flex items-center justify-center transition transform active:scale-95 text-xs">
+        <button onclick="togglePlay()" id="playBtn" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 hover:bg-white text-rose-500 shadow-sm flex items-center justify-center transition transform active:scale-95 text-[10px] sm:text-xs">
           <i class="fa-solid fa-play ml-0.5"></i>
         </button>
-        <button onclick="nextTrack()" class="hover:text-rose-600 transition text-xs">
+        <button onclick="nextTrack()" class="hover:text-rose-600 transition text-[10px] sm:text-xs p-1">
           <i class="fa-solid fa-forward-step"></i>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Elemento de Audio Oculto -->
   <audio id="bgAudio" preload="metadata"></audio>
 
-  <!-- CONTENEDOR PRINCIPAL DEL JUEGO -->
-  <main class="relative z-10 max-w-xl mx-auto w-full px-4 pt-44 pb-12 sm:py-8 my-auto">
+  <!-- CONTENEDOR PRINCIPAL (MÁS AMPLIO) -->
+  <main class="relative z-10 max-w-2xl sm:max-w-3xl mx-auto w-full px-4 pt-32 pb-8 sm:py-10 my-auto">
     
     <!-- PANTALLA 1: BIENVENIDA -->
-    <section id="welcomeScreen" class="bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-rose-100 text-center space-y-6 transition-all duration-500">
+    <section id="welcomeScreen" class="bg-white/90 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-2xl border border-rose-100 text-center space-y-6 transition-all duration-500">
       <div class="inline-flex items-center justify-center w-20 h-20 bg-rose-100/70 text-rose-500 rounded-full text-3xl shadow-inner animate-pulse">
         <i class="fa-solid fa-heart"></i>
       </div>
       <div>
         <span class="text-xs uppercase tracking-widest text-rose-400 font-semibold">14 Años de Aventuras</span>
-        <h1 class="text-3xl font-bold text-slate-800 mt-1">Nuestra Historia de Amor</h1>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mt-2">Nuestra Historia de Amor</h1>
       </div>
-      <p class="text-sm text-slate-600 leading-relaxed">
-        Hola mi amor ❤️. Cada año juntos ha tenido risas, viajes, aprendizajes y momentos inolvidables. He preparado este pequeño juego con <strong>14 preguntas especiales</strong> (una por cada año). ¿Qué tanto recuerdas de todo lo que hemos vivido?
+      <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-lg mx-auto">
+        Hola mi amor ❤️. Cada año juntos ha tenido risas, viajes, anécdotas y momentos inolvidables. He preparado este juego con <strong>14 preguntas especiales</strong> (una por cada año que nos conocemos). ¿Qué tanto recuerdas de todo lo vivido?
       </p>
-      <div class="pt-2">
-        <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white font-semibold rounded-2xl shadow-lg shadow-rose-200 hover:shadow-rose-300 transition-all duration-300 transform hover:-translate-y-0.5">
-          Comenzar la Aventura <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+      <div class="pt-4">
+        <button onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white text-base font-bold rounded-2xl shadow-lg shadow-rose-200 hover:shadow-rose-300 transition-all duration-300 transform hover:-translate-y-0.5">
+          Comenzar la Aventura <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
         </button>
       </div>
     </section>
 
     <!-- PANTALLA 2: CUESTIONARIO -->
-    <section id="quizScreen" class="hidden bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border border-rose-100 space-y-6 transition-all duration-500">
-      <!-- Barra de Progreso y Puntos -->
+    <section id="quizScreen" class="hidden bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-2xl border border-rose-100 space-y-6 transition-all duration-500">
       <div class="space-y-2">
-        <div class="flex justify-between items-center text-xs font-semibold">
+        <div class="flex justify-between items-center text-xs sm:text-sm font-semibold">
           <span class="text-rose-500 flex items-center gap-1.5">
             <i class="fa-regular fa-calendar-check"></i> <span id="progressText">Pregunta 1 de 14</span>
           </span>
-          <span class="bg-rose-100/70 text-rose-600 px-3 py-1 rounded-full text-[11px] shadow-sm">
+          <span class="bg-rose-100/80 text-rose-600 px-3.5 py-1 rounded-full text-xs shadow-sm font-bold">
             <i class="fa-solid fa-star mr-1 text-amber-400"></i><span id="scoreText">0 Puntos</span>
           </span>
         </div>
-        <div class="w-full bg-rose-100 rounded-full h-2 overflow-hidden">
-          <div id="progressBar" class="bg-gradient-to-r from-rose-400 to-pink-500 h-2 rounded-full transition-all duration-500" style="width: 7%"></div>
+        <div class="w-full bg-rose-100 rounded-full h-2.5 overflow-hidden">
+          <div id="progressBar" class="bg-gradient-to-r from-rose-400 to-pink-500 h-2.5 rounded-full transition-all duration-500" style="width: 7%"></div>
         </div>
       </div>
 
-      <!-- Enunciado de la Pregunta -->
       <div>
-        <span id="questionTag" class="text-[11px] uppercase tracking-wider font-bold text-purple-400 block mb-1">El Comienzo</span>
-        <h2 id="questionTitle" class="text-lg sm:text-xl font-bold text-slate-800 leading-snug"></h2>
+        <span id="questionTag" class="text-xs uppercase tracking-wider font-bold text-purple-500 block mb-1">El Comienzo</span>
+        <h2 id="questionTitle" class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug"></h2>
       </div>
 
-      <!-- Contenedor dinámico (Opción Múltiple o Parejas) -->
-      <div id="interactiveArea" class="space-y-3 min-h-[220px] flex flex-col justify-center"></div>
+      <!-- Zona de Pregunta (Posición relativa para flechas SVG exactas) -->
+      <div id="interactiveArea" class="relative min-h-[260px] flex flex-col justify-center"></div>
 
-      <!-- Retroalimentación / Mensaje tierno -->
-      <div id="feedbackText" class="min-h-[24px] text-xs text-center font-medium transition-opacity duration-300 opacity-0"></div>
+      <div id="feedbackText" class="min-h-[26px] text-xs sm:text-sm text-center font-semibold transition-opacity duration-300 opacity-0"></div>
     </section>
 
-    <!-- PANTALLA 3: RESULTADO Y SORTEO DEL PREMIO -->
-    <section id="prizeScreen" class="hidden bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-rose-100 text-center space-y-6 transition-all duration-500">
+    <!-- PANTALLA 3: RESULTADO -->
+    <section id="prizeScreen" class="hidden bg-white/90 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-2xl border border-rose-100 text-center space-y-6 transition-all duration-500">
       <div class="inline-flex items-center justify-center w-20 h-20 bg-amber-100/80 text-amber-500 rounded-full text-3xl shadow-inner animate-bounce">
         <i class="fa-solid fa-gift"></i>
       </div>
       <div>
-        <h2 class="text-2xl font-bold text-slate-800">¡Lo completaste con éxito!</h2>
-        <p id="finalScoreMsg" class="text-xs text-rose-500 font-semibold mt-1"></p>
+        <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">¡Lo completaste con éxito!</h2>
+        <p id="finalScoreMsg" class="text-sm text-rose-500 font-bold mt-1.5"></p>
       </div>
-      <p class="text-sm text-slate-600 leading-relaxed">
-        Gracias por estos 14 años llenos de recuerdos, risas y momentos únicos a mi lado. Como recompensa, ¡tienes un premio especial asegurado! Toca el botón para revelar tu sorpresa:
+      <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-md mx-auto">
+        Gracias por estos 14 años llenos de amor y risas. Toca tu tarjeta sorpresa para descubrir qué premio nos espera juntos:
       </p>
 
-      <!-- Tarjeta Rasca y Revela / Caja Sorpresa -->
-      <div id="cardBox" class="relative max-w-sm mx-auto p-6 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow-lg shadow-rose-200 cursor-pointer transition-transform hover:scale-[1.02]" onclick="revealPrize()">
+      <div id="cardBox" class="relative max-w-md mx-auto p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow-xl shadow-rose-200 cursor-pointer transition-transform hover:scale-[1.02]" onclick="revealPrize()">
         <div id="hiddenPrizeState">
-          <i class="fa-solid fa-box-open text-4xl mb-2 animate-pulse"></i>
-          <span class="block text-sm font-bold tracking-wide">Toca para descubrir tu premio</span>
-          <span class="text-[11px] text-rose-100">Hecho con mucho amor para ti</span>
+          <i class="fa-solid fa-box-open text-4xl sm:text-5xl mb-2 animate-pulse"></i>
+          <span class="block text-base font-bold tracking-wide">Toca para descubrir tu premio</span>
+          <span class="text-xs text-rose-100">Hecho con mucho amor para ti</span>
         </div>
         <div id="revealedPrizeState" class="hidden space-y-2">
-          <span class="text-[11px] uppercase tracking-wider text-rose-100 font-bold">¡Premio Seleccionado!</span>
-          <h3 id="prizeName" class="text-xl font-extrabold text-white"></h3>
+          <span class="text-xs uppercase tracking-wider text-rose-100 font-bold">¡Premio Seleccionado!</span>
+          <h3 id="prizeName" class="text-xl sm:text-2xl font-extrabold text-white"></h3>
           <p class="text-xs text-rose-100">Válido cuando tú elijas disfrutarlo juntos ❤️</p>
         </div>
       </div>
 
-      <div class="pt-2">
-        <button onclick="restartQuiz()" class="text-xs text-slate-400 hover:text-rose-500 transition-colors">
+      <div class="pt-4">
+        <button onclick="restartQuiz()" class="text-xs sm:text-sm text-slate-400 hover:text-rose-500 transition-colors">
           <i class="fa-solid fa-rotate-left mr-1"></i> Volver a jugar
         </button>
       </div>
@@ -157,7 +148,7 @@
 
   </main>
 
-  <footer class="text-center py-4 text-[11px] text-slate-400 z-10">
+  <footer class="text-center py-4 text-xs text-slate-400 z-10">
     Hecho con ❤️ para Ivechi • 14 Años Juntos
   </footer>
 
