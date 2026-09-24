@@ -310,23 +310,21 @@ function selectChoice(option, btn, q) {
 // RENDERIZADO DE EMPAREJAMIENTO CON FLECHAS
 // ==========================================
 let activeSvg = null;
-let currentPairsMap = [];
 
 function renderMatch(q, container) {
   currentMatchesCount = 0;
   selectedLeft = null;
-  currentPairsMap = q.pairs;
 
   const wrapper = document.createElement("div");
-  wrapper.className = "relative";
+  wrapper.className = "relative w-full py-2";
 
-  // Lienzo SVG para dibujar las conexiones con flechas
+  // SVG con punta de flecha integrada
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.className = "match-svg-canvas";
   svg.innerHTML = `
     <defs>
-      <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 8 5 L 0 9 z" fill="#10b981" />
+      <marker id="arrowHead" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 9 5 L 0 9 z" fill="#10b981" />
       </marker>
     </defs>
   `;
@@ -334,34 +332,30 @@ function renderMatch(q, container) {
   activeSvg = svg;
 
   const grid = document.createElement("div");
-  grid.className = "grid grid-cols-2 gap-4 text-xs relative z-10";
+  grid.className = "grid grid-cols-2 gap-4 sm:gap-8 text-xs sm:text-sm";
 
   const leftCol = document.createElement("div");
   leftCol.className = "space-y-3";
   const rightCol = document.createElement("div");
   rightCol.className = "space-y-3";
 
-  // Mezclar columna derecha conservando identificadores únicos
-  const rightItems = q.pairs.map((p, idx) => ({ text: p.right, originalIndex: idx }));
-  const shuffledRight = rightItems.sort(() => Math.random() - 0.5);
+  // Desordenar columna derecha
+  const shuffledRight = [...q.pairs].sort(() => Math.random() - 0.5);
 
   q.pairs.forEach((pair, idx) => {
     const lDiv = document.createElement("div");
-    lDiv.className = "match-item p-3 rounded-xl bg-slate-50 border border-slate-200 font-medium text-slate-700 cursor-pointer text-center transition-all";
+    lDiv.className = "match-item p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-semibold text-slate-700 cursor-pointer text-center shadow-sm";
     lDiv.innerText = pair.left;
-    lDiv.id = `left_item_${idx}`;
-    lDiv.dataset.targetText = pair.right;
-    lDiv.dataset.index = idx;
+    lDiv.dataset.target = pair.right;
     lDiv.onclick = () => handleLeftClick(lDiv);
     leftCol.appendChild(lDiv);
   });
 
-  shuffledRight.forEach((item, rIdx) => {
+  shuffledRight.forEach(pair => {
     const rDiv = document.createElement("div");
-    rDiv.className = "match-item p-3 rounded-xl bg-slate-50 border border-slate-200 font-medium text-slate-700 cursor-pointer text-center transition-all";
-    rDiv.innerText = item.text;
-    rDiv.id = `right_item_${rIdx}`;
-    rDiv.dataset.text = item.text;
+    rDiv.className = "match-item p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-semibold text-slate-700 cursor-pointer text-center shadow-sm";
+    rDiv.innerText = pair.right;
+    rDiv.dataset.text = pair.right;
     rDiv.onclick = () => handleRightClick(rDiv, q);
     rightCol.appendChild(rDiv);
   });
@@ -384,14 +378,14 @@ function handleLeftClick(el) {
 function handleRightClick(el, q) {
   if (!selectedLeft || el.classList.contains("matched")) return;
 
-  // Validación por contenido exacto de respuesta esperada (elimina el fallo con múltiples "Ive")
-  if (selectedLeft.dataset.targetText === el.dataset.text) {
+  // Validación correcta incluso con alternativas repetidas
+  if (selectedLeft.dataset.target === el.dataset.text) {
     selectedLeft.classList.remove("selected");
     selectedLeft.classList.add("matched");
     el.classList.add("matched");
 
-    // Dibujar flecha de enlace
-    drawLineBetween(selectedLeft, el);
+    // Dibujar la flecha conectora
+    drawConnectingArrow(selectedLeft, el);
 
     selectedLeft = null;
     currentMatchesCount++;
@@ -401,7 +395,7 @@ function handleRightClick(el, q) {
       document.getElementById("scoreText").innerText = `${score} Puntos`;
       const feedback = document.getElementById("feedbackText");
       feedback.innerText = `❤️ ${q.feedback}`;
-      feedback.className = "text-xs text-center font-semibold text-emerald-600 opacity-100 transition-opacity";
+      feedback.className = "text-xs sm:text-sm text-center font-semibold text-emerald-600 opacity-100 transition-opacity";
       if (typeof confetti === "function") {
         confetti({ particleCount: 35, spread: 65, origin: { y: 0.8 } });
       }
@@ -415,29 +409,30 @@ function handleRightClick(el, q) {
   }
 }
 
-// Cálculo geométrico para trazar la flecha entre las dos cajas
-function drawLineBetween(leftEl, rightEl) {
+// Trazado de flecha curva visible
+function drawConnectingArrow(fromEl, toEl) {
   if (!activeSvg) return;
 
-  const parentRect = activeSvg.getBoundingClientRect();
-  const leftRect = leftEl.getBoundingClientRect();
-  const rightRect = rightEl.getBoundingClientRect();
+  const svgRect = activeSvg.getBoundingClientRect();
+  const fromRect = fromEl.getBoundingClientRect();
+  const toRect = toEl.getBoundingClientRect();
 
-  const x1 = leftRect.right - parentRect.left;
-  const y1 = leftRect.top + (leftRect.height / 2) - parentRect.top;
+  const startX = fromRect.right - svgRect.left;
+  const startY = fromRect.top + fromRect.height / 2 - svgRect.top;
 
-  const x2 = rightRect.left - parentRect.left - 4;
-  const y2 = rightRect.top + (rightRect.height / 2) - parentRect.top;
+  const endX = toRect.left - svgRect.left - 4;
+  const endY = toRect.top + toRect.height / 2 - svgRect.top;
 
-  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-  line.setAttribute("x1", x1);
-  line.setAttribute("y1", y1);
-  line.setAttribute("x2", x2);
-  line.setAttribute("y2", y2);
-  line.setAttribute("class", "match-line");
-  line.setAttribute("marker-end", "url(#arrow)");
+  // Línea con curva suave hacia el objetivo
+  const deltaX = (endX - startX) * 0.5;
+  const pathData = `M ${startX} ${startY} C ${startX + deltaX} ${startY}, ${endX - deltaX} ${endY}, ${endX} ${endY}`;
 
-  activeSvg.appendChild(line);
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", pathData);
+  path.setAttribute("class", "match-line");
+  path.setAttribute("marker-end", "url(#arrowHead)");
+
+  activeSvg.appendChild(path);
 }
 
 function nextQuestion() {
