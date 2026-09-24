@@ -403,4 +403,109 @@ function createHearts() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", createHearts);
+// ==========================================
+// LISTA DE CANCIONES (PLAYLIST)
+// ==========================================
+// Puedes colocar enlaces directos a tus archivos mp3 (subidos a tu repo o URLs públicas)
+const playlist = [
+  {
+    title: "Amargura / Provenza",
+    artist: "Karol G",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Reemplazar por tu enlace de audio
+    cover: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=150"
+  },
+  {
+    title: "A Mí",
+    artist: "Rels B",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", // Reemplazar por tu enlace de audio
+    cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150"
+  },
+  {
+    title: "Cumbia Romántica",
+    artist: "Nuestra Selección",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", // Reemplazar por tu enlace de audio
+    cover: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=150"
+  }
+];
+
+let currentTrackIndex = 0;
+const audio = document.getElementById("bgAudio");
+const vinylDisk = document.getElementById("vinylDisk");
+const tonearm = document.getElementById("turntableArm");
+const playBtn = document.getElementById("playBtn");
+
+function loadTrack(index) {
+  const track = playlist[index];
+  document.getElementById("trackTitle").innerText = track.title;
+  document.getElementById("trackArtist").innerText = track.artist;
+  document.getElementById("trackCover").style.backgroundImage = `url('${track.cover}')`;
+  audio.src = track.src;
+}
+
+function togglePlay() {
+  if (audio.paused) {
+    audio.play().then(() => {
+      vinylDisk.classList.add("spinning");
+      tonearm.classList.add("playing");
+      playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    }).catch(err => {
+      console.log("Interacción de usuario requerida para reproducir audio.");
+    });
+  } else {
+    audio.pause();
+    vinylDisk.classList.remove("spinning");
+    tonearm.classList.remove("playing");
+    playBtn.innerHTML = '<i class="fa-solid fa-play ml-0.5"></i>';
+  }
+}
+
+function nextTrack() {
+  currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+  loadTrack(currentTrackIndex);
+  audio.play();
+  vinylDisk.classList.add("spinning");
+  tonearm.classList.add("playing");
+  playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+}
+
+function prevTrack() {
+  currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+  loadTrack(currentTrackIndex);
+  audio.play();
+  vinylDisk.classList.add("spinning");
+  tonearm.classList.add("playing");
+  playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+}
+
+// Actualización de barra de progreso y tiempo
+audio.addEventListener("timeupdate", () => {
+  if (audio.duration) {
+    const progressPct = (audio.currentTime / audio.duration) * 100;
+    document.getElementById("audioProgress").style.width = `${progressPct}%`;
+    document.getElementById("currentTime").innerText = formatTime(audio.currentTime);
+    document.getElementById("totalDuration").innerText = formatTime(audio.duration);
+  }
+});
+
+audio.addEventListener("ended", nextTrack);
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function seekAudio(e) {
+  const bar = e.currentTarget;
+  const rect = bar.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const width = rect.width;
+  if (audio.duration) {
+    audio.currentTime = (clickX / width) * audio.duration;
+  }
+}
+
+// Iniciar cargando la primera canción
+document.addEventListener("DOMContentLoaded", () => {
+  loadTrack(currentTrackIndex);
+});
