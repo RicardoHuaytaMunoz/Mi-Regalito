@@ -186,43 +186,43 @@ const playlist = [
   {
     title: "AMOR",
     artist: "Danny Ocean",
-    src: "./music/Danny Ocean - AMOR (LETRA _ LYRICS) ❤️ __Solo Dame Amor Por Favor_(M4A_128K).m4a",
+    src: "./music/amor.m4a",
     cover: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=150"
   },
   {
     title: "Tus Gafitas",
     artist: "KAROL G",
-    src: "./music/KAROL G - Tus Gafitas (Lyrics _ Letra)(M4A_128K).m4a",
+    src: "./music/tus-gafitas.m4a",
     cover: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=150"
   },
   {
     title: "Still",
     artist: "KAROL G & Bruno Mars",
-    src: "./music/KAROL G_ Bruno Mars - Still (Letra en Español Lyrics)(M4A_128K).m4a",
+    src: "./music/still.m4a",
     cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150"
   },
   {
     title: "Eres para mí",
     artist: "Julieta Venegas",
-    src: "./music/Julieta Venegas - Eres para mí _ Letra(M4A_128K).m4a",
+    src: "./music/eres-para-mi.m4a",
     cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150"
   },
   {
     title: "Tú y Tú",
     artist: "Los Ángeles Azules & Cazzu",
-    src: "./music/Los Angeles Azules ft Cazzu _ Santa Fe Klan- TU y Tu letra oficial ✓(M4A_128K).m4a",
+    src: "./music/tu-y-tu.m4a",
     cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=150"
   },
   {
     title: "BbY WOW",
     artist: "KAROL G & Judeline",
-    src: "./music/KAROL G_ Judeline_ rusowsky - BbY WOW (Letra_Lyrics)(M4A_128K).m4a",
+    src: "./music/bby-wow.m4a",
     cover: "https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=150"
   },
   {
     title: "Risk It All",
     artist: "Bruno Mars",
-    src: "./music/Bruno Mars - Risk It All(M4A_128K).m4a",
+    src: "./music/risk-it-all.m4a",
     cover: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=150"
   }
 ];
