@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Quicksand', sans-serif;
+}
+
+/* Efecto corazones de fondo flotando suavemente */
+.floating-heart {
+  position: absolute;
+  color: rgba(244, 63, 94, 0.15);
+  animation: floatUp 12s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(105vh) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Opciones de respuesta */
+.option-btn {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.option-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.12);
+}
+
+/* Estado de elementos de enlazar */
+.match-item {
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.match-item.selected {
+  border-color: #ec4899 !important;
+  background-color: #fdf2f8 !important;
+  transform: scale(1.02);
+}
+.match-item.matched {
+  border-color: #10b981 !important;
+  background-color: #ecfdf5 !important;
+  color: #059669 !important;
+  pointer-events: none;
+}
+
+/* Animación sutil al revelar el premio */
+@keyframes prizeReveal {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.prize-revealed {
+  animation: prizeReveal 0.5s ease-out forwards;
+}
