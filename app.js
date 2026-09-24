@@ -37,7 +37,7 @@ const questions = [
       { text: "Reggaetón viejito de discoteca", correct: false },
       { text: "Rock alternativo acústico", correct: false }
     ],
-    feedback: "¡Exacto! Esas cumbias románticas y Rels B marcan nuestros viajes."
+    feedback: "¡Exacto! Esas canciones marcan nuestros mejores recuerdos."
   },
   {
     type: "choice",
@@ -180,6 +180,59 @@ const prizes = [
 ];
 
 // ==========================================
+// PLAYLIST CON TUS CANCIONES REALES
+// ==========================================
+const playlist = [
+  {
+    title: "Tus Gafitas",
+    artist: "KAROL G",
+    file: "KAROL G - Tus Gafitas (Lyrics _ Letra)(M4A_128K).m4a",
+    cover: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=150"
+  },
+  {
+    title: "Still",
+    artist: "KAROL G & Bruno Mars",
+    file: "KAROL G_ Bruno Mars - Still (Letra en Español Lyrics)(M4A_128K).m4a",
+    cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150"
+  },
+  {
+    title: "AMOR",
+    artist: "Danny Ocean",
+    file: "Danny Ocean - AMOR (LETRA _ LYRICS) ❤️ __Solo Dame Amor Por Favor_(M4A_128K).m4a",
+    cover: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=150"
+  },
+  {
+    title: "Eres para mí",
+    artist: "Julieta Venegas",
+    file: "Julieta Venegas - Eres para mí _ Letra(M4A_128K).m4a",
+    cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150"
+  },
+  {
+    title: "Tú y Tú",
+    artist: "Los Ángeles Azules, Cazzu & Santa Fe Klan",
+    file: "Los Angeles Azules ft Cazzu _ Santa Fe Klan- TU y Tu letra oficial ✓(M4A_128K).m4a",
+    cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=150"
+  },
+  {
+    title: "BbY WOW",
+    artist: "KAROL G, Judeline & rusowsky",
+    file: "KAROL G_ Judeline_ rusowsky - BbY WOW (Letra_Lyrics)(M4A_128K).m4a",
+    cover: "https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=150"
+  },
+  {
+    title: "Risk It All",
+    artist: "Bruno Mars",
+    file: "Bruno Mars - Risk It All(M4A_128K).m4a",
+    cover: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=150"
+  }
+];
+
+// Asignar rutas codificadas de manera segura
+playlist.forEach(item => {
+  item.src = "music/" + encodeURIComponent(item.file);
+});
+
+// ==========================================
 // ESTADO Y CONTROLADOR DE VISTAS
 // ==========================================
 let currentIdx = 0;
@@ -205,7 +258,6 @@ function renderQuestion() {
   feedback.innerText = "";
   area.innerHTML = "";
 
-  // Barra de progreso
   const progressPct = ((currentIdx + 1) / questions.length) * 100;
   document.getElementById("progressBar").style.width = `${progressPct}%`;
   document.getElementById("progressText").innerText = `Pregunta ${currentIdx + 1} de ${questions.length}`;
@@ -220,9 +272,7 @@ function renderQuestion() {
   }
 }
 
-// Render: Opción Múltiple
 function renderChoice(q, container) {
-  // Mezclar opciones para dinamismo
   const shuffled = [...q.options].sort(() => Math.random() - 0.5);
 
   shuffled.forEach(opt => {
@@ -258,7 +308,6 @@ function selectChoice(option, btn, q) {
   setTimeout(nextQuestion, 1600);
 }
 
-// Render: Emparejar / Enlazar
 function renderMatch(q, container) {
   currentMatchesCount = 0;
   selectedLeft = null;
@@ -271,7 +320,6 @@ function renderMatch(q, container) {
   const rightCol = document.createElement("div");
   rightCol.className = "space-y-2";
 
-  // Mezclar columna derecha
   const shuffledRight = [...q.pairs].sort(() => Math.random() - 0.5);
 
   q.pairs.forEach((pair, idx) => {
@@ -287,7 +335,6 @@ function renderMatch(q, container) {
     const rDiv = document.createElement("div");
     rDiv.className = "match-item p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200 font-medium text-slate-700 cursor-pointer text-center";
     rDiv.innerText = pair.right;
-    // Asignar el pairId que corresponde a este valor
     const originalIdx = q.pairs.findIndex(p => p.right === pair.right);
     rDiv.dataset.pairId = originalIdx;
     rDiv.onclick = () => handleRightClick(rDiv, q);
@@ -351,7 +398,6 @@ function showPrizeScreen() {
 
   document.getElementById("finalScoreMsg").innerText = `Obtuviste ${score} de 14 aciertos perfectos`;
 
-  // Lluvia de confeti de victoria
   confetti({
     particleCount: 80,
     spread: 70,
@@ -359,7 +405,6 @@ function showPrizeScreen() {
   });
 }
 
-// Revelar Premio
 function revealPrize() {
   const hiddenState = document.getElementById("hiddenPrizeState");
   const revealedState = document.getElementById("revealedPrizeState");
@@ -388,9 +433,9 @@ function restartQuiz() {
   startQuiz();
 }
 
-// Generador de corazones de fondo
 function createHearts() {
   const bg = document.getElementById("heartBg");
+  if (!bg) return;
   const symbols = ["❤️", "💖", "🌸", "✨"];
   for (let i = 0; i < 15; i++) {
     const heart = document.createElement("div");
@@ -404,90 +449,67 @@ function createHearts() {
 }
 
 // ==========================================
-// LISTA DE CANCIONES (PLAYLIST)
+// CONTROLADOR DEL TOCADISCOS / REPRODUCTOR
 // ==========================================
-// Puedes colocar enlaces directos a tus archivos mp3 (subidos a tu repo o URLs públicas)
-const playlist = [
-  {
-    title: "Amargura / Provenza",
-    artist: "Karol G",
-    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Reemplazar por tu enlace de audio
-    cover: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=150"
-  },
-  {
-    title: "A Mí",
-    artist: "Rels B",
-    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", // Reemplazar por tu enlace de audio
-    cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150"
-  },
-  {
-    title: "Cumbia Romántica",
-    artist: "Nuestra Selección",
-    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", // Reemplazar por tu enlace de audio
-    cover: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=150"
-  }
-];
-
 let currentTrackIndex = 0;
-const audio = document.getElementById("bgAudio");
-const vinylDisk = document.getElementById("vinylDisk");
-const tonearm = document.getElementById("turntableArm");
-const playBtn = document.getElementById("playBtn");
+let audio = null;
+let vinylDisk = null;
+let tonearm = null;
+let playBtn = null;
 
 function loadTrack(index) {
   const track = playlist[index];
-  document.getElementById("trackTitle").innerText = track.title;
-  document.getElementById("trackArtist").innerText = track.artist;
-  document.getElementById("trackCover").style.backgroundImage = `url('${track.cover}')`;
-  audio.src = track.src;
+  const titleEl = document.getElementById("trackTitle");
+  const artistEl = document.getElementById("trackArtist");
+  const coverEl = document.getElementById("trackCover");
+
+  if (titleEl) titleEl.innerText = track.title;
+  if (artistEl) artistEl.innerText = track.artist;
+  if (coverEl) coverEl.style.backgroundImage = `url('${track.cover}')`;
+  if (audio) audio.src = track.src;
 }
 
 function togglePlay() {
+  if (!audio) return;
   if (audio.paused) {
     audio.play().then(() => {
-      vinylDisk.classList.add("spinning");
-      tonearm.classList.add("playing");
-      playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    }).catch(err => {
+      if (vinylDisk) vinylDisk.classList.add("spinning");
+      if (tonearm) tonearm.classList.add("playing");
+      if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    }).catch(() => {
       console.log("Interacción de usuario requerida para reproducir audio.");
     });
   } else {
     audio.pause();
-    vinylDisk.classList.remove("spinning");
-    tonearm.classList.remove("playing");
-    playBtn.innerHTML = '<i class="fa-solid fa-play ml-0.5"></i>';
+    if (vinylDisk) vinylDisk.classList.remove("spinning");
+    if (tonearm) tonearm.classList.remove("playing");
+    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play ml-0.5"></i>';
   }
 }
 
 function nextTrack() {
   currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
   loadTrack(currentTrackIndex);
-  audio.play();
-  vinylDisk.classList.add("spinning");
-  tonearm.classList.add("playing");
-  playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+  if (audio) {
+    audio.play().then(() => {
+      if (vinylDisk) vinylDisk.classList.add("spinning");
+      if (tonearm) tonearm.classList.add("playing");
+      if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    }).catch(() => {});
+  }
 }
 
 function prevTrack() {
   currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
   loadTrack(currentTrackIndex);
-  audio.play();
-  vinylDisk.classList.add("spinning");
-  tonearm.classList.add("playing");
-  playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-}
-
-// Actualización de barra de progreso y tiempo
-audio.addEventListener("timeupdate", () => {
-  if (audio.duration) {
-    const progressPct = (audio.currentTime / audio.duration) * 100;
-    document.getElementById("audioProgress").style.width = `${progressPct}%`;
-    document.getElementById("currentTime").innerText = formatTime(audio.currentTime);
-    document.getElementById("totalDuration").innerText = formatTime(audio.duration);
+  if (audio) {
+    audio.play().then(() => {
+      if (vinylDisk) vinylDisk.classList.add("spinning");
+      if (tonearm) tonearm.classList.add("playing");
+      if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    }).catch(() => {});
   }
-});
-
-audio.addEventListener("ended", nextTrack);
+}
 
 function formatTime(sec) {
   const m = Math.floor(sec / 60);
@@ -496,16 +518,38 @@ function formatTime(sec) {
 }
 
 function seekAudio(e) {
+  if (!audio || !audio.duration) return;
   const bar = e.currentTarget;
   const rect = bar.getBoundingClientRect();
   const clickX = e.clientX - rect.left;
   const width = rect.width;
-  if (audio.duration) {
-    audio.currentTime = (clickX / width) * audio.duration;
-  }
+  audio.currentTime = (clickX / width) * audio.duration;
 }
 
-// Iniciar cargando la primera canción
 document.addEventListener("DOMContentLoaded", () => {
-  loadTrack(currentTrackIndex);
+  createHearts();
+
+  audio = document.getElementById("bgAudio");
+  vinylDisk = document.getElementById("vinylDisk");
+  tonearm = document.getElementById("turntableArm");
+  playBtn = document.getElementById("playBtn");
+
+  if (audio) {
+    loadTrack(currentTrackIndex);
+
+    audio.addEventListener("timeupdate", () => {
+      if (audio.duration) {
+        const progressPct = (audio.currentTime / audio.duration) * 100;
+        const progEl = document.getElementById("audioProgress");
+        const curEl = document.getElementById("currentTime");
+        const totEl = document.getElementById("totalDuration");
+
+        if (progEl) progEl.style.width = `${progressPct}%`;
+        if (curEl) curEl.innerText = formatTime(audio.currentTime);
+        if (totEl) totEl.innerText = formatTime(audio.duration);
+      }
+    });
+
+    audio.addEventListener("ended", nextTrack);
+  }
 });
