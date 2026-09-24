@@ -15,8 +15,8 @@
 
   <!-- REPRODUCTOR COMPACTO -->
   <div class="fixed top-2 right-2 sm:top-4 sm:right-4 z-50">
-    <div class="player-card backdrop-blur-md bg-white/40 border border-white/50 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 shadow-xl flex flex-col items-center w-36 sm:w-48 text-slate-800 transition-all">
-      <div class="relative w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center mb-1">
+    <div class="player-card backdrop-blur-md bg-white/50 border border-white/60 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-xl flex flex-col items-center w-36 sm:w-48 text-slate-800 transition-all">
+      <div class="relative w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center mb-1 sm:mb-2">
         <div id="turntableArm" class="tonearm"></div>
         <div id="vinylDisk" class="vinyl w-12 h-12 sm:w-16 sm:h-16 rounded-full shadow-lg flex items-center justify-center">
           <div id="trackCover" class="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-cover bg-center border border-slate-900 shadow-inner"></div>
@@ -24,25 +24,25 @@
       </div>
       <div class="text-center w-full px-1 mb-1">
         <h4 id="trackTitle" class="text-[10px] sm:text-xs font-bold text-slate-800 truncate">Cargando...</h4>
-        <p id="trackArtist" class="text-[8px] sm:text-[9px] text-slate-500 truncate">Música</p>
+        <p id="trackArtist" class="text-[8px] sm:text-[10px] text-slate-500 truncate">Música</p>
       </div>
-      <div class="w-full px-1 space-y-0.5">
-        <div class="w-full bg-slate-200/70 h-1 rounded-full overflow-hidden cursor-pointer" onclick="seekAudio(event)">
+      <div class="w-full px-1 space-y-0.5 sm:space-y-1">
+        <div class="w-full bg-slate-200/80 h-1 sm:h-1.5 rounded-full overflow-hidden cursor-pointer" onclick="seekAudio(event)">
           <div id="audioProgress" class="bg-rose-500 h-full w-0 transition-all duration-150"></div>
         </div>
-        <div class="flex justify-between text-[7px] sm:text-[8px] text-slate-400 font-medium">
+        <div class="flex justify-between text-[7px] sm:text-[9px] text-slate-500 font-medium mt-0.5">
           <span id="currentTime">0:00</span>
           <span id="totalDuration">0:00</span>
         </div>
       </div>
-      <div class="flex items-center justify-center gap-2 sm:gap-3 mt-1.5 text-slate-700">
-        <button onclick="prevTrack()" class="hover:text-rose-600 transition text-[9px] sm:text-xs p-1">
+      <div class="flex items-center justify-center gap-2 sm:gap-3 mt-1.5 sm:mt-2 text-slate-700">
+        <button onclick="prevTrack()" class="hover:text-rose-600 transition text-[9px] sm:text-sm p-1">
           <i class="fa-solid fa-backward-step"></i>
         </button>
-        <button onclick="togglePlay()" id="playBtn" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/90 hover:bg-white text-rose-500 shadow-sm flex items-center justify-center transition transform active:scale-95 text-[9px] sm:text-xs">
+        <button onclick="togglePlay()" id="playBtn" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/90 hover:bg-white text-rose-500 shadow-md flex items-center justify-center transition transform active:scale-95 text-[9px] sm:text-xs">
           <i class="fa-solid fa-play ml-0.5"></i>
         </button>
-        <button onclick="nextTrack()" class="hover:text-rose-600 transition text-[9px] sm:text-xs p-1">
+        <button onclick="nextTrack()" class="hover:text-rose-600 transition text-[9px] sm:text-sm p-1">
           <i class="fa-solid fa-forward-step"></i>
         </button>
       </div>
@@ -52,86 +52,86 @@
   <audio id="bgAudio" preload="metadata"></audio>
 
   <!-- CONTENEDOR PRINCIPAL -->
-  <main class="relative z-10 max-w-2xl sm:max-w-3xl mx-auto w-full px-4 pt-28 pb-8 sm:py-10 my-auto">
+  <main class="relative z-10 max-w-2xl sm:max-w-4xl mx-auto w-full px-4 pt-28 pb-10 sm:py-16 my-auto">
     
     <!-- PANTALLA 1: BIENVENIDA -->
-    <section id="welcomeScreen" class="bg-white/90 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-2xl border border-rose-100 text-center space-y-6 transition-all duration-500">
-      <div class="inline-flex items-center justify-center w-20 h-20 bg-rose-100/70 text-rose-500 rounded-full text-3xl shadow-inner animate-pulse">
+    <section id="welcomeScreen" class="bg-white/95 backdrop-blur-md rounded-3xl p-8 sm:p-14 shadow-2xl border border-rose-100 text-center space-y-6 transition-all duration-500">
+      <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-rose-100/70 text-rose-500 rounded-full text-3xl sm:text-4xl shadow-inner animate-pulse">
         <i class="fa-solid fa-heart"></i>
       </div>
       <div>
-        <span class="text-xs uppercase tracking-widest text-rose-400 font-semibold">14 Años de Aventuras</span>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mt-2">Nuestra Historia de Amor</h1>
+        <span class="text-xs sm:text-sm uppercase tracking-widest text-rose-400 font-bold">14 Años de Aventuras</span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-800 mt-3">Nuestra Historia de Amor</h1>
       </div>
-      <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-lg mx-auto">
+      <p class="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
         Hola mi amor ❤️. Cada año juntos ha tenido risas, viajes, anécdotas y momentos inolvidables. He preparado este juego con <strong>14 preguntas especiales</strong> (una por cada año que nos conocemos). ¿Qué tanto recuerdas de todo lo vivido?
       </p>
-      <div class="pt-4">
-        <button onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white text-base font-bold rounded-2xl shadow-lg shadow-rose-200 hover:shadow-rose-300 transition-all duration-300 transform hover:-translate-y-0.5">
-          Comenzar la Aventura <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+      <div class="pt-6">
+        <button onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 sm:px-12 sm:py-5 bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white text-base sm:text-lg font-bold rounded-2xl shadow-xl shadow-rose-200 hover:shadow-rose-300 transition-all duration-300 transform hover:-translate-y-1">
+          Comenzar la Aventura <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
       </div>
     </section>
 
-    <!-- PANTALLA 2: CUESTIONARIO REFINADO -->
-    <section id="quizScreen" class="hidden bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-2xl border border-rose-100 flex flex-col justify-between min-h-[500px] transition-all duration-500">
+    <!-- PANTALLA 2: CUESTIONARIO ARREGLADO -->
+    <section id="quizScreen" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-12 shadow-2xl border border-rose-100 transition-all duration-500 w-full relative">
       
       <!-- Encabezado de Progreso -->
-      <div class="space-y-2 mb-4">
-        <div class="flex justify-between items-center text-xs sm:text-sm font-semibold">
-          <span class="text-rose-500 flex items-center gap-1.5">
+      <div class="space-y-2 mb-6 sm:mb-10">
+        <div class="flex justify-between items-center text-xs sm:text-base font-bold">
+          <span class="text-rose-500 flex items-center gap-2">
             <i class="fa-regular fa-calendar-check"></i> <span id="progressText">Pregunta 1 de 14</span>
           </span>
-          <span class="bg-rose-100/80 text-rose-600 px-3.5 py-1 rounded-full text-xs shadow-sm font-bold">
+          <span class="bg-rose-100/80 text-rose-600 px-4 py-1.5 rounded-full shadow-sm">
             <i class="fa-solid fa-star mr-1 text-amber-400"></i><span id="scoreText">0 Puntos</span>
           </span>
         </div>
-        <div class="w-full bg-rose-100 rounded-full h-2.5 overflow-hidden">
-          <div id="progressBar" class="bg-gradient-to-r from-rose-400 to-pink-500 h-2.5 rounded-full transition-all duration-500" style="width: 7%"></div>
+        <div class="w-full bg-rose-100 rounded-full h-3 overflow-hidden">
+          <div id="progressBar" class="bg-gradient-to-r from-rose-400 to-pink-500 h-3 rounded-full transition-all duration-500" style="width: 7%"></div>
         </div>
       </div>
 
       <!-- Título de Pregunta -->
-      <div class="mb-4">
-        <span id="questionTag" class="text-xs uppercase tracking-wider font-bold text-purple-500 block mb-1">El Comienzo</span>
-        <h2 id="questionTitle" class="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 leading-snug"></h2>
+      <div class="mb-8">
+        <span id="questionTag" class="text-xs sm:text-sm uppercase tracking-wider font-extrabold text-purple-500 block mb-2">El Comienzo</span>
+        <h2 id="questionTitle" class="text-xl sm:text-3xl font-extrabold text-slate-800 leading-snug"></h2>
       </div>
 
-      <!-- Área interactiva centrada -->
-      <div id="interactiveArea" class="flex-1 flex flex-col justify-center my-2"></div>
+      <!-- Área interactiva (Aquí se inyectan los botones grandes) -->
+      <div id="interactiveArea" class="relative w-full"></div>
 
       <!-- Feedback -->
-      <div id="feedbackText" class="mt-4 min-h-[26px] text-xs sm:text-sm text-center font-semibold transition-opacity duration-300 opacity-0"></div>
+      <div id="feedbackText" class="mt-8 min-h-[28px] text-sm sm:text-base text-center font-bold transition-opacity duration-300 opacity-0"></div>
     </section>
 
     <!-- PANTALLA 3: RESULTADO -->
-    <section id="prizeScreen" class="hidden bg-white/90 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-2xl border border-rose-100 text-center space-y-6 transition-all duration-500">
-      <div class="inline-flex items-center justify-center w-20 h-20 bg-amber-100/80 text-amber-500 rounded-full text-3xl shadow-inner animate-bounce">
+    <section id="prizeScreen" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-8 sm:p-14 shadow-2xl border border-rose-100 text-center space-y-6 transition-all duration-500">
+      <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-amber-100/80 text-amber-500 rounded-full text-4xl shadow-inner animate-bounce">
         <i class="fa-solid fa-gift"></i>
       </div>
       <div>
-        <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">¡Lo completaste con éxito!</h2>
-        <p id="finalScoreMsg" class="text-sm text-rose-500 font-bold mt-1.5"></p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800">¡Lo completaste!</h2>
+        <p id="finalScoreMsg" class="text-base sm:text-lg text-rose-500 font-bold mt-2"></p>
       </div>
-      <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-md mx-auto">
+      <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-lg mx-auto">
         Gracias por estos 14 años llenos de amor y risas. Toca tu tarjeta sorpresa para descubrir qué premio nos espera juntos:
       </p>
 
-      <div id="cardBox" class="relative max-w-md mx-auto p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow-xl shadow-rose-200 cursor-pointer transition-transform hover:scale-[1.02]" onclick="revealPrize()">
+      <div id="cardBox" class="relative max-w-lg mx-auto p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow-xl shadow-rose-200 cursor-pointer transition-transform hover:scale-[1.03]" onclick="revealPrize()">
         <div id="hiddenPrizeState">
-          <i class="fa-solid fa-box-open text-4xl sm:text-5xl mb-2 animate-pulse"></i>
-          <span class="block text-base font-bold tracking-wide">Toca para descubrir tu premio</span>
-          <span class="text-xs text-rose-100">Hecho con mucho amor para ti</span>
+          <i class="fa-solid fa-box-open text-5xl sm:text-6xl mb-4 animate-pulse"></i>
+          <span class="block text-lg sm:text-xl font-bold tracking-wide">Toca para descubrir tu premio</span>
+          <span class="text-sm text-rose-100 mt-2 block">Hecho con mucho amor para ti</span>
         </div>
-        <div id="revealedPrizeState" class="hidden space-y-2">
-          <span class="text-xs uppercase tracking-wider text-rose-100 font-bold">¡Premio Seleccionado!</span>
-          <h3 id="prizeName" class="text-xl sm:text-2xl font-extrabold text-white"></h3>
-          <p class="text-xs text-rose-100">Válido cuando tú elijas disfrutarlo juntos ❤️</p>
+        <div id="revealedPrizeState" class="hidden space-y-3">
+          <span class="text-sm uppercase tracking-wider text-rose-100 font-bold">¡Premio Seleccionado!</span>
+          <h3 id="prizeName" class="text-2xl sm:text-3xl font-extrabold text-white"></h3>
+          <p class="text-sm sm:text-base text-rose-100">Válido cuando tú elijas disfrutarlo ❤️</p>
         </div>
       </div>
 
-      <div class="pt-4">
-        <button onclick="restartQuiz()" class="text-xs sm:text-sm text-slate-400 hover:text-rose-500 transition-colors">
+      <div class="pt-6">
+        <button onclick="restartQuiz()" class="text-sm sm:text-base text-slate-400 hover:text-rose-500 transition-colors font-semibold">
           <i class="fa-solid fa-rotate-left mr-1"></i> Volver a jugar
         </button>
       </div>
@@ -139,7 +139,7 @@
 
   </main>
 
-  <footer class="text-center py-4 text-xs text-slate-400 z-10">
+  <footer class="text-center py-6 text-sm text-slate-400 z-10 font-medium">
     Hecho con ❤️ para Ivechi • 14 Años Juntos
   </footer>
 
