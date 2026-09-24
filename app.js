@@ -326,7 +326,7 @@ function renderMatch(q, container) {
   const wrapper = document.createElement("div");
   wrapper.className = "grid grid-cols-2 gap-4 sm:gap-8 w-full relative";
 
-  // Capa SVG absoluta para dibujar las flechas de enlace
+  // Capa SVG absoluta para dibujar las flechas
   const svgLayer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svgLayer.style.position = "absolute";
   svgLayer.style.top = "0";
@@ -334,14 +334,14 @@ function renderMatch(q, container) {
   svgLayer.style.width = "100%";
   svgLayer.style.height = "100%";
   svgLayer.style.pointerEvents = "none";
-  svgLayer.style.zIndex = "10";
+  svgLayer.style.zIndex = "0"; 
   svgLayer.style.overflow = "visible";
   
-  // Definición de la cabeza de flecha (Más fina y pequeña)
+  // Diseño de flecha estilizada, con tamaño bloqueado (markerUnits="userSpaceOnUse")
   svgLayer.innerHTML = `
     <defs>
-      <marker id="arrowhead" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
-        <polygon points="0 0, 7 2.5, 0 5" fill="#10b981" />
+      <marker id="sleekArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="12" markerHeight="12" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M 0 2 L 9 5 L 0 8 Q 2 5 0 2" fill="#10b981" />
       </marker>
     </defs>
   `;
@@ -349,15 +349,15 @@ function renderMatch(q, container) {
   activeSvg = svgLayer;
 
   const leftCol = document.createElement("div");
-  leftCol.className = "flex flex-col gap-4 sm:gap-6";
+  leftCol.className = "flex flex-col gap-4 sm:gap-6 relative z-10";
   const rightCol = document.createElement("div");
-  rightCol.className = "flex flex-col gap-4 sm:gap-6";
+  rightCol.className = "flex flex-col gap-4 sm:gap-6 relative z-10";
 
   const shuffledRight = [...q.pairs].sort(() => Math.random() - 0.5);
 
   q.pairs.forEach((pair) => {
     const lDiv = document.createElement("div");
-    lDiv.className = "match-item p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-200 text-sm sm:text-base font-bold text-slate-700 cursor-pointer text-center shadow-sm transition-all flex items-center justify-center min-h-[80px]";
+    lDiv.className = "match-item p-4 sm:p-6 rounded-2xl bg-white border-2 border-slate-200 text-sm sm:text-base font-bold text-slate-700 cursor-pointer text-center shadow-sm transition-all flex items-center justify-center min-h-[80px]";
     lDiv.innerText = pair.left;
     lDiv.dataset.target = pair.right;
     lDiv.onclick = () => handleLeftClick(lDiv);
@@ -366,7 +366,7 @@ function renderMatch(q, container) {
 
   shuffledRight.forEach((pair) => {
     const rDiv = document.createElement("div");
-    rDiv.className = "match-item p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-200 text-sm sm:text-base font-bold text-slate-700 cursor-pointer text-center shadow-sm transition-all flex items-center justify-center min-h-[80px]";
+    rDiv.className = "match-item p-4 sm:p-6 rounded-2xl bg-white border-2 border-slate-200 text-sm sm:text-base font-bold text-slate-700 cursor-pointer text-center shadow-sm transition-all flex items-center justify-center min-h-[80px]";
     rDiv.innerText = pair.right;
     rDiv.dataset.text = pair.right;
     rDiv.onclick = () => handleRightClick(rDiv, q);
@@ -437,23 +437,25 @@ function drawSvgArrow(leftEl, rightEl) {
   const leftRect = leftEl.getBoundingClientRect();
   const rightRect = rightEl.getBoundingClientRect();
 
-  // Coordenadas exactas relativas al SVG
+  // Coordenadas relativas
   const x1 = leftRect.right - containerRect.left;
   const y1 = leftRect.top + (leftRect.height / 2) - containerRect.top;
   
-  const x2 = rightRect.left - containerRect.left - 6; // Espacio para que la punta no muerda el borde
+  const x2 = rightRect.left - containerRect.left - 6; // Deja un margen para que la punta no muerda la caja
   const y2 = rightRect.top + (rightRect.height / 2) - containerRect.top;
 
+  // Curva dinámica basada en la distancia (evita que las líneas se enreden feo)
+  const dist = Math.abs(x2 - x1);
+  const cpX = dist * 0.45; // Los puntos de control se ajustan al 45% de la separación
+
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  
-  // Curva Bezier más suave
-  const d = `M ${x1} ${y1} C ${x1 + 35} ${y1}, ${x2 - 35} ${y2}, ${x2} ${y2}`;
+  const d = `M ${x1} ${y1} C ${x1 + cpX} ${y1}, ${x2 - cpX} ${y2}, ${x2} ${y2}`;
   
   path.setAttribute("d", d);
-  path.setAttribute("stroke", "#10b981"); // Verde esmeralda
-  path.setAttribute("stroke-width", "2"); // Grosor reducido de 3.5 a 2
-  path.setAttribute("fill", "transparent");
-  path.setAttribute("marker-end", "url(#arrowhead)");
+  path.setAttribute("stroke", "#10b981");
+  path.setAttribute("stroke-width", "2"); // Línea mucho más fina
+  path.setAttribute("fill", "none"); // CLAVE: evita que el navegador intente "pintar" dentro de la curva
+  path.setAttribute("marker-end", "url(#sleekArrow)");
   path.setAttribute("stroke-linecap", "round");
   path.classList.add("draw-line-anim");
 
