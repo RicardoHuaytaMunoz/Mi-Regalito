@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap');
 
 body {
   font-family: 'Quicksand', sans-serif;
 }
 
-/* Corazones flotantes */
 .floating-heart {
   position: absolute;
   color: rgba(244, 63, 94, 0.15);
@@ -19,105 +18,28 @@ body {
   100% { transform: translateY(-10vh) scale(1.1); opacity: 0; }
 }
 
-/* Separación y diseño de opciones múltiples */
-.option-btn {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 1rem 1.25rem;
-  margin-bottom: 0.75rem; /* Margen vertical para que no choquen */
-  border-radius: 1rem;
-  background-color: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  font-size: 0.925rem;
-  font-weight: 600;
-  color: #334155;
-  text-align: left;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-.option-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background-color: #fff1f2;
-  border-color: #fecdd3;
-  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.12);
+/* Animación para el trazado de la flecha SVG */
+.draw-line-anim {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawLine 0.7s ease-out forwards;
 }
 
-/* Ítems para enlazar (Preguntas 11 a 14) */
-.match-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 52px;
-  padding: 0.75rem 1rem;
-  border-radius: 1rem;
-  background-color: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #334155;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: all 0.25s ease;
-  user-select: none;
-}
-@media (min-width: 640px) {
-  .match-item {
-    font-size: 0.9rem;
-    min-height: 58px;
-    padding: 0.85rem 1.2rem;
-  }
-}
-.match-item:hover:not(.matched) {
-  transform: translateY(-1.5px);
-  background-color: #fff1f2;
-  border-color: #fecdd3;
-}
-.match-item.selected {
-  border-color: #ec4899 !important;
-  background-color: #fdf2f8 !important;
-  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
-  transform: scale(1.02);
-}
-.match-item.matched {
-  border-color: #10b981 !important;
-  background-color: #ecfdf5 !important;
-  color: #065f46 !important;
-  cursor: default;
-}
-
-/* Distintivo de conexión de pareja */
-.match-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 0.15rem 0.5rem;
-  border-radius: 9999px;
-  background-color: #10b981;
-  color: #ffffff;
-  margin-left: 0.5rem;
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-  0% { transform: scale(0); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
 }
 
 /* Reproductor de vinilo */
 .player-card {
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .vinyl {
   background: radial-gradient(circle, #2a2a2a 28%, #111111 68%, #000000 100%);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   transition: transform 0.5s ease;
 }
 
@@ -145,6 +67,16 @@ body {
   pointer-events: none;
 }
 
+@media (min-width: 640px) {
+  .tonearm {
+    width: 22px;
+    height: 48px;
+    background-image: radial-gradient(circle at 18px 6px, #cbd5e1 5px, transparent 6px),
+                      linear-gradient(to bottom right, transparent 45%, #94a3b8 48%, #cbd5e1 52%, transparent 55%);
+    transform-origin: 18px 6px;
+  }
+}
+
 .tonearm.playing {
-  transform: rotate(8deg) !important;
+  transform: rotate(10deg) !important;
 }
