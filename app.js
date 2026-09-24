@@ -224,23 +224,27 @@ const playlist = [
 ];
 
 // ==========================================
-// LÓGICA DEL CUESTIONARIO
+// LÓGICA DEL CUESTIONARIO Y RENDERIZADO
 // ==========================================
 let currentIdx = 0;
 let score = 0;
 let selectedLeft = null;
 let currentMatchesCount = 0;
+let activeSvg = null; // Para la capa de flechas
 
 window.startQuiz = function() {
-  document.getElementById("welcomeScreen").classList.add("hidden");
-  document.getElementById("quizScreen").classList.remove("hidden");
-  currentIdx = 0;
-  score = 0;
-  renderQuestion();
-  
-  // Iniciar la música automáticamente al comenzar si el usuario lo desea
-  if (audio && audio.paused) {
-    togglePlay();
+  const welcome = document.getElementById("welcomeScreen");
+  const quiz = document.getElementById("quizScreen");
+  if (welcome && quiz) {
+    welcome.classList.add("hidden");
+    quiz.classList.remove("hidden");
+    currentIdx = 0;
+    score = 0;
+    renderQuestion();
+    
+    if (audio && audio.paused) {
+      window.togglePlay();
+    }
   }
 };
 
@@ -249,6 +253,8 @@ function renderQuestion() {
   const area = document.getElementById("interactiveArea");
   const feedback = document.getElementById("feedbackText");
   
+  if (!area || !feedback) return;
+
   feedback.classList.remove("opacity-100");
   feedback.classList.add("opacity-0");
   feedback.innerText = "";
@@ -269,15 +275,22 @@ function renderQuestion() {
 }
 
 function renderChoice(q, container) {
+  const wrapper = document.createElement("div");
+  // Gap amplio entre opciones
+  wrapper.className = "flex flex-col gap-4 sm:gap-6 w-full";
+
   const shuffled = [...q.options].sort(() => Math.random() - 0.5);
 
   shuffled.forEach(opt => {
     const btn = document.createElement("button");
-    btn.className = "option-btn w-full p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-left text-sm font-semibold text-slate-700 hover:bg-rose-50 hover:border-rose-200 transition-all";
+    // Clases explícitas para botones grandes y separados
+    btn.className = "w-full p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-200 text-left text-base sm:text-lg font-bold text-slate-700 hover:bg-rose-50 hover:border-rose-300 transition-all shadow-sm option-btn";
     btn.innerText = opt.text;
     btn.onclick = () => selectChoice(opt, btn, q);
-    container.appendChild(btn);
+    wrapper.appendChild(btn);
   });
+
+  container.appendChild(wrapper);
 }
 
 function selectChoice(option, btn, q) {
@@ -287,121 +300,112 @@ function selectChoice(option, btn, q) {
   const feedback = document.getElementById("feedbackText");
 
   if (option.correct) {
-    btn.classList.remove("bg-slate-50", "border-slate-200/80");
+    btn.classList.remove("bg-slate-50", "border-slate-200");
     btn.classList.add("bg-emerald-50", "border-emerald-400", "text-emerald-700");
     score++;
     document.getElementById("scoreText").innerText = `${score} Puntos`;
     feedback.innerText = `❤️ ${q.feedback}`;
-    feedback.className = "text-xs text-center font-semibold text-emerald-600 opacity-100 transition-opacity";
+    feedback.className = "text-sm sm:text-lg text-center font-extrabold text-emerald-600 opacity-100 transition-opacity";
     if (typeof confetti === "function") {
-      confetti({ particleCount: 25, spread: 50, origin: { y: 0.8 } });
+      confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
     }
   } else {
-    btn.classList.remove("bg-slate-50", "border-slate-200/80");
-    btn.classList.add("bg-rose-50", "border-rose-300", "text-rose-600");
+    btn.classList.remove("bg-slate-50", "border-slate-200");
+    btn.classList.add("bg-rose-50", "border-rose-400", "text-rose-700");
     feedback.innerText = "¡Casi! Pero no te preocupes, sigues sumando amor.";
-    feedback.className = "text-xs text-center font-semibold text-rose-500 opacity-100 transition-opacity";
+    feedback.className = "text-sm sm:text-lg text-center font-extrabold text-rose-500 opacity-100 transition-opacity";
   }
 
   setTimeout(nextQuestion, 1600);
 }
 
-// ==========================================
-// RENDERIZADO DE EMPAREJAMIENTO CON FLECHAS
-// ==========================================
-let activeSvg = null;
-
-// Render: Opción Múltiple (Separadas y estilizadas)
-function renderChoice(q, container) {
-  const choiceWrapper = document.createElement("div");
-  choiceWrapper.className = "flex flex-col space-y-3 w-full py-1";
-
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5);
-
-  shuffled.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.className = "option-btn";
-    btn.innerText = opt.text;
-    btn.onclick = () => selectChoice(opt, btn, q);
-    choiceWrapper.appendChild(btn);
-  });
-
-  container.appendChild(choiceWrapper);
-}
-
-// Render: Emparejar / Enlazar (Preguntas 11 a 14 proporcionales y conectadas)
-let matchPairCounter = 0;
-
 function renderMatch(q, container) {
   currentMatchesCount = 0;
   selectedLeft = null;
-  matchPairCounter = 0;
 
-  const matchWrapper = document.createElement("div");
-  matchWrapper.className = "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 w-full py-1";
+  const wrapper = document.createElement("div");
+  // Grid uniforme con espacios definidos
+  wrapper.className = "grid grid-cols-2 gap-4 sm:gap-8 w-full relative";
+
+  // Capa SVG absoluta para dibujar las flechas de enlace
+  const svgLayer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svgLayer.style.position = "absolute";
+  svgLayer.style.top = "0";
+  svgLayer.style.left = "0";
+  svgLayer.style.width = "100%";
+  svgLayer.style.height = "100%";
+  svgLayer.style.pointerEvents = "none";
+  svgLayer.style.zIndex = "10";
+  svgLayer.style.overflow = "visible";
+  
+  // Definición de la cabeza de flecha
+  svgLayer.innerHTML = `
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+      </marker>
+    </defs>
+  `;
+  wrapper.appendChild(svgLayer);
+  activeSvg = svgLayer;
 
   const leftCol = document.createElement("div");
-  leftCol.className = "flex flex-col space-y-2.5 sm:space-y-3";
+  leftCol.className = "flex flex-col gap-4 sm:gap-6";
   const rightCol = document.createElement("div");
-  rightCol.className = "flex flex-col space-y-2.5 sm:space-y-3";
+  rightCol.className = "flex flex-col gap-4 sm:gap-6";
 
-  // Mezclar columna derecha
   const shuffledRight = [...q.pairs].sort(() => Math.random() - 0.5);
 
-  q.pairs.forEach((pair, idx) => {
+  q.pairs.forEach((pair) => {
     const lDiv = document.createElement("div");
-    lDiv.className = "match-item";
-    lDiv.innerHTML = `<span>${pair.left}</span>`;
+    // Tarjetas de emparejamiento grandes
+    lDiv.className = "match-item p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-200 text-sm sm:text-base font-bold text-slate-700 cursor-pointer text-center shadow-sm transition-all flex items-center justify-center min-h-[80px]";
+    lDiv.innerText = pair.left;
     lDiv.dataset.target = pair.right;
     lDiv.onclick = () => handleLeftClick(lDiv);
     leftCol.appendChild(lDiv);
   });
 
-  shuffledRight.forEach(pair => {
+  shuffledRight.forEach((pair) => {
     const rDiv = document.createElement("div");
-    rDiv.className = "match-item";
-    rDiv.innerHTML = `<span>${pair.right}</span>`;
+    rDiv.className = "match-item p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-200 text-sm sm:text-base font-bold text-slate-700 cursor-pointer text-center shadow-sm transition-all flex items-center justify-center min-h-[80px]";
+    rDiv.innerText = pair.right;
     rDiv.dataset.text = pair.right;
     rDiv.onclick = () => handleRightClick(rDiv, q);
     rightCol.appendChild(rDiv);
   });
 
-  matchWrapper.appendChild(leftCol);
-  matchWrapper.appendChild(rightCol);
-  container.appendChild(matchWrapper);
+  wrapper.appendChild(leftCol);
+  wrapper.appendChild(rightCol);
+  container.appendChild(wrapper);
 }
 
 function handleLeftClick(el) {
   if (el.classList.contains("matched")) return;
   document.querySelectorAll("#interactiveArea .match-item").forEach(item => {
-    if (!item.classList.contains("matched")) item.classList.remove("selected");
+    if (!item.classList.contains("matched")) {
+      item.classList.remove("border-pink-500", "bg-pink-50", "scale-105");
+      item.classList.add("border-slate-200", "bg-slate-50");
+    }
   });
-  el.classList.add("selected");
+  
+  el.classList.remove("border-slate-200", "bg-slate-50");
+  el.classList.add("border-pink-500", "bg-pink-50", "scale-105");
   selectedLeft = el;
 }
 
 function handleRightClick(el, q) {
   if (!selectedLeft || el.classList.contains("matched")) return;
 
-  // Validación exacta de la pareja
   if (selectedLeft.dataset.target === el.dataset.text) {
-    matchPairCounter++;
-    const pairId = matchPairCounter;
+    // Acertó
+    selectedLeft.classList.remove("border-pink-500", "bg-pink-50", "scale-105");
+    selectedLeft.classList.add("border-emerald-400", "bg-emerald-50", "text-emerald-700", "matched");
+    el.classList.remove("border-slate-200", "bg-slate-50");
+    el.classList.add("border-emerald-400", "bg-emerald-50", "text-emerald-700", "matched");
 
-    selectedLeft.classList.remove("selected");
-    selectedLeft.classList.add("matched");
-    el.classList.add("matched");
-
-    // Añadir distintivo conector sincronizado (ej. [1] ➔ [1])
-    const leftBadge = document.createElement("span");
-    leftBadge.className = "match-badge";
-    leftBadge.innerHTML = `<i class="fa-solid fa-link mr-1 text-[10px]"></i>${pairId}`;
-    selectedLeft.appendChild(leftBadge);
-
-    const rightBadge = document.createElement("span");
-    rightBadge.className = "match-badge";
-    rightBadge.innerHTML = `<i class="fa-solid fa-check mr-1 text-[10px]"></i>${pairId}`;
-    el.appendChild(rightBadge);
+    // Dibujar Flecha SVG animada
+    drawSvgArrow(selectedLeft, el);
 
     selectedLeft = null;
     currentMatchesCount++;
@@ -411,42 +415,49 @@ function handleRightClick(el, q) {
       document.getElementById("scoreText").innerText = `${score} Puntos`;
       const feedback = document.getElementById("feedbackText");
       feedback.innerText = `❤️ ${q.feedback}`;
-      feedback.className = "text-xs sm:text-sm text-center font-semibold text-emerald-600 opacity-100 transition-opacity";
+      feedback.className = "text-sm sm:text-lg text-center font-extrabold text-emerald-600 opacity-100 transition-opacity";
       if (typeof confetti === "function") {
         confetti({ particleCount: 35, spread: 65, origin: { y: 0.8 } });
       }
       setTimeout(nextQuestion, 1800);
     }
   } else {
-    el.classList.add("border-rose-300", "bg-rose-50");
+    // Falló
+    el.classList.remove("border-slate-200", "bg-slate-50");
+    el.classList.add("border-rose-400", "bg-rose-50");
     setTimeout(() => {
-      el.classList.remove("border-rose-300", "bg-rose-50");
-    }, 450);
+      el.classList.remove("border-rose-400", "bg-rose-50");
+      el.classList.add("border-slate-200", "bg-slate-50");
+    }, 500);
   }
 }
 
-// Trazado de flecha curva visible
-function drawConnectingArrow(fromEl, toEl) {
+function drawSvgArrow(leftEl, rightEl) {
   if (!activeSvg) return;
 
-  const svgRect = activeSvg.getBoundingClientRect();
-  const fromRect = fromEl.getBoundingClientRect();
-  const toRect = toEl.getBoundingClientRect();
+  const containerRect = activeSvg.getBoundingClientRect();
+  const leftRect = leftEl.getBoundingClientRect();
+  const rightRect = rightEl.getBoundingClientRect();
 
-  const startX = fromRect.right - svgRect.left;
-  const startY = fromRect.top + fromRect.height / 2 - svgRect.top;
-
-  const endX = toRect.left - svgRect.left - 4;
-  const endY = toRect.top + toRect.height / 2 - svgRect.top;
-
-  // Línea con curva suave hacia el objetivo
-  const deltaX = (endX - startX) * 0.5;
-  const pathData = `M ${startX} ${startY} C ${startX + deltaX} ${startY}, ${endX - deltaX} ${endY}, ${endX} ${endY}`;
+  // Coordenadas exactas relativas al SVG
+  const x1 = leftRect.right - containerRect.left;
+  const y1 = leftRect.top + (leftRect.height / 2) - containerRect.top;
+  
+  const x2 = rightRect.left - containerRect.left - 5; // -5 para dejar espacio a la flecha
+  const y2 = rightRect.top + (rightRect.height / 2) - containerRect.top;
 
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("d", pathData);
-  path.setAttribute("class", "match-line");
-  path.setAttribute("marker-end", "url(#arrowHead)");
+  
+  // Curva Bezier elegante entre ambos botones
+  const d = `M ${x1} ${y1} C ${x1 + 40} ${y1}, ${x2 - 40} ${y2}, ${x2} ${y2}`;
+  
+  path.setAttribute("d", d);
+  path.setAttribute("stroke", "#10b981");
+  path.setAttribute("stroke-width", "3.5");
+  path.setAttribute("fill", "transparent");
+  path.setAttribute("marker-end", "url(#arrowhead)");
+  path.setAttribute("stroke-linecap", "round");
+  path.classList.add("draw-line-anim");
 
   activeSvg.appendChild(path);
 }
@@ -463,11 +474,13 @@ function nextQuestion() {
 function showPrizeScreen() {
   document.getElementById("quizScreen").classList.add("hidden");
   const prizeScreen = document.getElementById("prizeScreen");
-  prizeScreen.classList.remove("hidden");
-  document.getElementById("finalScoreMsg").innerText = `Obtuviste ${score} de 14 aciertos perfectos`;
+  if (prizeScreen) {
+    prizeScreen.classList.remove("hidden");
+    document.getElementById("finalScoreMsg").innerText = `Obtuviste ${score} de 14 aciertos perfectos`;
 
-  if (typeof confetti === "function") {
-    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+    if (typeof confetti === "function") {
+      confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+    }
   }
 }
 
@@ -476,7 +489,7 @@ window.revealPrize = function() {
   const revealedState = document.getElementById("revealedPrizeState");
   const prizeName = document.getElementById("prizeName");
 
-  if (!hiddenState.classList.contains("hidden")) {
+  if (hiddenState && !hiddenState.classList.contains("hidden")) {
     const selected = prizes[Math.floor(Math.random() * prizes.length)];
     prizeName.innerText = selected;
     hiddenState.classList.add("hidden");
@@ -484,7 +497,7 @@ window.revealPrize = function() {
     document.getElementById("cardBox").classList.add("prize-revealed");
 
     if (typeof confetti === "function") {
-      confetti({ particleCount: 120, spread: 100, origin: { y: 0.5 } });
+      confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
     }
   }
 };
@@ -503,17 +516,16 @@ function createHearts() {
   const symbols = ["❤️", "💖", "🌸", "✨"];
   for (let i = 0; i < 15; i++) {
     const heart = document.createElement("div");
-    heart.className = "floating-heart text-sm";
+    heart.className = "floating-heart text-sm sm:text-xl";
     heart.innerText = symbols[Math.floor(Math.random() * symbols.length)];
     heart.style.left = `${Math.random() * 95}%`;
     heart.style.animationDelay = `${Math.random() * 10}s`;
-    heart.style.fontSize = `${Math.floor(Math.random() * 12 + 14)}px`;
     bg.appendChild(heart);
   }
 }
 
 // ==========================================
-// CONTROLADOR DEL REPRODUCTOR VINILO
+// CONTROLADOR DEL TOCADISCOS / REPRODUCTOR
 // ==========================================
 let currentTrackIndex = 0;
 let audio = null;
@@ -541,13 +553,16 @@ window.togglePlay = function() {
   if (!audio) return;
 
   if (audio.paused) {
-    audio.play().then(() => {
-      if (vinylDisk) vinylDisk.classList.add("spinning");
-      if (tonearm) tonearm.classList.add("playing");
-      if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    }).catch(err => {
-      console.warn("Reproducción en espera de interacción de usuario.");
-    });
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        if (vinylDisk) vinylDisk.classList.add("spinning");
+        if (tonearm) tonearm.classList.add("playing");
+        if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+      }).catch(err => {
+        console.warn("Esperando interacción del usuario para reproducir audio:", err);
+      });
+    }
   } else {
     audio.pause();
     if (vinylDisk) vinylDisk.classList.remove("spinning");
@@ -594,6 +609,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (audio) {
     loadTrack(currentTrackIndex);
+
+    audio.addEventListener("loadedmetadata", () => {
+      const totEl = document.getElementById("totalDuration");
+      if (totEl) totEl.innerText = formatTime(audio.duration);
+    });
 
     audio.addEventListener("timeupdate", () => {
       if (audio.duration) {
