@@ -180,55 +180,55 @@ const prizes = [
 ];
 
 // ==========================================
-// PLAYLIST CON TUS CANCIONES REALES (RUTAS LIMPIAS)
+// PLAYLIST (RUTAS ESTÁTICAS DIRECTAS)
 // ==========================================
 const playlist = [
   {
     title: "AMOR",
     artist: "Danny Ocean",
-    src: "./music/amor.m4a",
+    src: "music/amor.m4a",
     cover: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=150"
   },
   {
     title: "Tus Gafitas",
     artist: "KAROL G",
-    src: "./music/tus-gafitas.m4a",
+    src: "music/tus-gafitas.m4a",
     cover: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=150"
   },
   {
     title: "Still",
     artist: "KAROL G & Bruno Mars",
-    src: "./music/still.m4a",
+    src: "music/still.m4a",
     cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150"
   },
   {
     title: "Eres para mí",
     artist: "Julieta Venegas",
-    src: "./music/eres-para-mi.m4a",
+    src: "music/eres-para-mi.m4a",
     cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150"
   },
   {
     title: "Tú y Tú",
     artist: "Los Ángeles Azules & Cazzu",
-    src: "./music/tu-y-tu.m4a",
+    src: "music/tu-y-tu.m4a",
     cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=150"
   },
   {
     title: "BbY WOW",
     artist: "KAROL G & Judeline",
-    src: "./music/bby-wow.m4a",
+    src: "music/bby-wow.m4a",
     cover: "https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=150"
   },
   {
     title: "Risk It All",
     artist: "Bruno Mars",
-    src: "./music/risk-it-all.m4a",
+    src: "music/risk-it-all.m4a",
     cover: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=150"
   }
 ];
 
 // ==========================================
-// CONTROLADOR DEL TOCADISCOS / REPRODUCTOR
+// CONTROLADOR ROBUSTO DE AUDIO
 // ==========================================
 let currentTrackIndex = 0;
 let audio = null;
@@ -247,6 +247,7 @@ function loadTrack(index) {
   if (coverEl) coverEl.style.backgroundImage = `url('${track.cover}')`;
   
   if (audio) {
+    audio.pause();
     audio.src = track.src;
     audio.load();
   }
@@ -255,13 +256,16 @@ function loadTrack(index) {
 function togglePlay() {
   if (!audio) return;
   if (audio.paused) {
-    audio.play().then(() => {
-      if (vinylDisk) vinylDisk.classList.add("spinning");
-      if (tonearm) tonearm.classList.add("playing");
-      if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    }).catch(err => {
-      console.warn("Error al intentar reproducir:", err);
-    });
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        if (vinylDisk) vinylDisk.classList.add("spinning");
+        if (tonearm) tonearm.classList.add("playing");
+        if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+      }).catch(error => {
+        console.warn("Autoplay prevenido por navegador. Requiere interacción manual:", error);
+      });
+    }
   } else {
     audio.pause();
     if (vinylDisk) vinylDisk.classList.remove("spinning");
@@ -273,29 +277,17 @@ function togglePlay() {
 function nextTrack() {
   currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
   loadTrack(currentTrackIndex);
-  if (audio) {
-    audio.play().then(() => {
-      if (vinylDisk) vinylDisk.classList.add("spinning");
-      if (tonearm) tonearm.classList.add("playing");
-      if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    }).catch(() => {});
-  }
+  togglePlay();
 }
 
 function prevTrack() {
   currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
   loadTrack(currentTrackIndex);
-  if (audio) {
-    audio.play().then(() => {
-      if (vinylDisk) vinylDisk.classList.add("spinning");
-      if (tonearm) tonearm.classList.add("playing");
-      if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    }).catch(() => {});
-  }
+  togglePlay();
 }
 
 function formatTime(sec) {
-  if (isNaN(sec)) return "0:00";
+  if (isNaN(sec) || !isFinite(sec)) return "0:00";
   const m = Math.floor(sec / 60);
   const s = Math.floor(sec % 60);
   return `${m}:${s < 10 ? '0' : ''}${s}`;
@@ -319,12 +311,12 @@ document.addEventListener("DOMContentLoaded", () => {
   playBtn = document.getElementById("playBtn");
 
   if (audio) {
-    // Manejo de errores de carga de audio
-    audio.addEventListener("error", (e) => {
-      console.error("No se pudo cargar el archivo de audio:", audio.src);
-    });
-
     loadTrack(currentTrackIndex);
+
+    audio.addEventListener("loadedmetadata", () => {
+      const totEl = document.getElementById("totalDuration");
+      if (totEl) totEl.innerText = formatTime(audio.duration);
+    });
 
     audio.addEventListener("timeupdate", () => {
       if (audio.duration) {
