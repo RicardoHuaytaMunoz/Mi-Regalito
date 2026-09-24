@@ -306,42 +306,70 @@ function selectChoice(option, btn, q) {
   setTimeout(nextQuestion, 1600);
 }
 
+// ==========================================
+// RENDERIZADO DE EMPAREJAMIENTO CON FLECHAS
+// ==========================================
+let activeSvg = null;
+let currentPairsMap = [];
+
 function renderMatch(q, container) {
   currentMatchesCount = 0;
   selectedLeft = null;
+  currentPairsMap = q.pairs;
 
-  const matchWrapper = document.createElement("div");
-  matchWrapper.className = "grid grid-cols-2 gap-3 text-xs";
+  const wrapper = document.createElement("div");
+  wrapper.className = "relative";
+
+  // Lienzo SVG para dibujar las conexiones con flechas
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.className = "match-svg-canvas";
+  svg.innerHTML = `
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 8 5 L 0 9 z" fill="#10b981" />
+      </marker>
+    </defs>
+  `;
+  wrapper.appendChild(svg);
+  activeSvg = svg;
+
+  const grid = document.createElement("div");
+  grid.className = "grid grid-cols-2 gap-4 text-xs relative z-10";
 
   const leftCol = document.createElement("div");
-  leftCol.className = "space-y-2";
+  leftCol.className = "space-y-3";
   const rightCol = document.createElement("div");
-  rightCol.className = "space-y-2";
+  rightCol.className = "space-y-3";
 
-  const shuffledRight = [...q.pairs].sort(() => Math.random() - 0.5);
+  // Mezclar columna derecha conservando identificadores únicos
+  const rightItems = q.pairs.map((p, idx) => ({ text: p.right, originalIndex: idx }));
+  const shuffledRight = rightItems.sort(() => Math.random() - 0.5);
 
   q.pairs.forEach((pair, idx) => {
     const lDiv = document.createElement("div");
-    lDiv.className = "match-item p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200 font-medium text-slate-700 cursor-pointer text-center";
+    lDiv.className = "match-item p-3 rounded-xl bg-slate-50 border border-slate-200 font-medium text-slate-700 cursor-pointer text-center transition-all";
     lDiv.innerText = pair.left;
-    lDiv.dataset.pairId = idx;
+    lDiv.id = `left_item_${idx}`;
+    lDiv.dataset.targetText = pair.right;
+    lDiv.dataset.index = idx;
     lDiv.onclick = () => handleLeftClick(lDiv);
     leftCol.appendChild(lDiv);
   });
 
-  shuffledRight.forEach(pair => {
+  shuffledRight.forEach((item, rIdx) => {
     const rDiv = document.createElement("div");
-    rDiv.className = "match-item p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200 font-medium text-slate-700 cursor-pointer text-center";
-    rDiv.innerText = pair.right;
-    const originalIdx = q.pairs.findIndex(p => p.right === pair.right);
-    rDiv.dataset.pairId = originalIdx;
+    rDiv.className = "match-item p-3 rounded-xl bg-slate-50 border border-slate-200 font-medium text-slate-700 cursor-pointer text-center transition-all";
+    rDiv.innerText = item.text;
+    rDiv.id = `right_item_${rIdx}`;
+    rDiv.dataset.text = item.text;
     rDiv.onclick = () => handleRightClick(rDiv, q);
     rightCol.appendChild(rDiv);
   });
 
-  matchWrapper.appendChild(leftCol);
-  matchWrapper.appendChild(rightCol);
-  container.appendChild(matchWrapper);
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  wrapper.appendChild(grid);
+  container.appendChild(wrapper);
 }
 
 function handleLeftClick(el) {
@@ -356,10 +384,15 @@ function handleLeftClick(el) {
 function handleRightClick(el, q) {
   if (!selectedLeft || el.classList.contains("matched")) return;
 
-  if (selectedLeft.dataset.pairId === el.dataset.pairId) {
+  // Validación por contenido exacto de respuesta esperada (elimina el fallo con múltiples "Ive")
+  if (selectedLeft.dataset.targetText === el.dataset.text) {
     selectedLeft.classList.remove("selected");
     selectedLeft.classList.add("matched");
     el.classList.add("matched");
+
+    // Dibujar flecha de enlace
+    drawLineBetween(selectedLeft, el);
+
     selectedLeft = null;
     currentMatchesCount++;
 
@@ -370,16 +403,41 @@ function handleRightClick(el, q) {
       feedback.innerText = `❤️ ${q.feedback}`;
       feedback.className = "text-xs text-center font-semibold text-emerald-600 opacity-100 transition-opacity";
       if (typeof confetti === "function") {
-        confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
+        confetti({ particleCount: 35, spread: 65, origin: { y: 0.8 } });
       }
-      setTimeout(nextQuestion, 1600);
+      setTimeout(nextQuestion, 1800);
     }
   } else {
     el.classList.add("border-rose-300", "bg-rose-50");
     setTimeout(() => {
       el.classList.remove("border-rose-300", "bg-rose-50");
-    }, 400);
+    }, 450);
   }
+}
+
+// Cálculo geométrico para trazar la flecha entre las dos cajas
+function drawLineBetween(leftEl, rightEl) {
+  if (!activeSvg) return;
+
+  const parentRect = activeSvg.getBoundingClientRect();
+  const leftRect = leftEl.getBoundingClientRect();
+  const rightRect = rightEl.getBoundingClientRect();
+
+  const x1 = leftRect.right - parentRect.left;
+  const y1 = leftRect.top + (leftRect.height / 2) - parentRect.top;
+
+  const x2 = rightRect.left - parentRect.left - 4;
+  const y2 = rightRect.top + (rightRect.height / 2) - parentRect.top;
+
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("x1", x1);
+  line.setAttribute("y1", y1);
+  line.setAttribute("x2", x2);
+  line.setAttribute("y2", y2);
+  line.setAttribute("class", "match-line");
+  line.setAttribute("marker-end", "url(#arrow)");
+
+  activeSvg.appendChild(line);
 }
 
 function nextQuestion() {
