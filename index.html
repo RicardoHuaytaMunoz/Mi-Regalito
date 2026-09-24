@@ -1,50 +1,166 @@
-<!-- REPRODUCTOR FLOTANTE TIPO VINILO -->
-<div class="fixed top-4 right-4 z-50">
-  <div class="player-card backdrop-blur-md bg-white/20 border border-white/30 rounded-3xl p-4 shadow-2xl flex flex-col items-center w-48 sm:w-56 text-slate-800">
-    
-    <!-- Tocadiscos / Vinilo giratorio -->
-    <div class="relative w-28 h-28 flex items-center justify-center mb-3">
-      <!-- Brazo de la aguja -->
-      <div id="turntableArm" class="tonearm"></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>14 Años Juntos - Nuestra Historia</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-gradient-to-br from-rose-50 via-purple-50 to-amber-50 text-slate-700 min-h-screen relative overflow-x-hidden flex flex-col justify-between selection:bg-rose-200">
+
+  <!-- Fondo animado sutil -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="heartBg"></div>
+
+  <!-- REPRODUCTOR FLOTANTE TIPO VINILO -->
+  <div class="fixed top-4 right-4 z-50">
+    <div class="player-card backdrop-blur-md bg-white/20 border border-white/30 rounded-3xl p-3 sm:p-4 shadow-2xl flex flex-col items-center w-44 sm:w-56 text-slate-800">
       
-      <!-- Disco de vinilo -->
-      <div id="vinylDisk" class="vinyl w-24 h-24 rounded-full shadow-xl flex items-center justify-center">
-        <!-- Carátula central del vinilo -->
-        <div id="trackCover" class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-slate-900 shadow-inner" style="background-image: url('https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=150');"></div>
+      <!-- Tocadiscos / Vinilo giratorio -->
+      <div class="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center mb-2 sm:mb-3">
+        <!-- Brazo de la aguja -->
+        <div id="turntableArm" class="tonearm"></div>
+        
+        <!-- Disco de vinilo -->
+        <div id="vinylDisk" class="vinyl w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-xl flex items-center justify-center">
+          <!-- Carátula central del vinilo -->
+          <div id="trackCover" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-cover bg-center border-2 border-slate-900 shadow-inner"></div>
+        </div>
       </div>
-    </div>
 
-    <!-- Info de la Canción -->
-    <div class="text-center w-full px-2 mb-2">
-      <h4 id="trackTitle" class="text-xs font-bold text-slate-800 truncate">Nuestra Canción</h4>
-      <p id="trackArtist" class="text-[10px] text-slate-600 truncate">Karol G / Rels B</p>
-    </div>
-
-    <!-- Barra de progreso y tiempos -->
-    <div class="w-full px-1 space-y-1">
-      <div class="w-full bg-white/40 h-1 rounded-full overflow-hidden cursor-pointer" onclick="seekAudio(event)">
-        <div id="audioProgress" class="bg-rose-500 h-full w-0 transition-all duration-200"></div>
+      <!-- Info de la Canción -->
+      <div class="text-center w-full px-2 mb-2">
+        <h4 id="trackTitle" class="text-xs font-bold text-slate-800 truncate">Cargando...</h4>
+        <p id="trackArtist" class="text-[10px] text-slate-600 truncate">Música</p>
       </div>
-      <div class="flex justify-between text-[9px] text-slate-500 font-medium">
-        <span id="currentTime">0:00</span>
-        <span id="totalDuration">0:00</span>
-      </div>
-    </div>
 
-    <!-- Controles Multimedia -->
-    <div class="flex items-center justify-center gap-4 mt-2 text-slate-700">
-      <button onclick="prevTrack()" class="hover:text-rose-600 transition text-xs">
-        <i class="fa-solid fa-backward-step"></i>
-      </button>
-      <button onclick="togglePlay()" id="playBtn" class="w-8 h-8 rounded-full bg-white/70 hover:bg-white text-rose-500 shadow-sm flex items-center justify-center transition transform active:scale-95 text-xs">
-        <i class="fa-solid fa-play ml-0.5"></i>
-      </button>
-      <button onclick="nextTrack()" class="hover:text-rose-600 transition text-xs">
-        <i class="fa-solid fa-forward-step"></i>
-      </button>
+      <!-- Barra de progreso y tiempos -->
+      <div class="w-full px-1 space-y-1">
+        <div class="w-full bg-white/40 h-1 rounded-full overflow-hidden cursor-pointer" onclick="seekAudio(event)">
+          <div id="audioProgress" class="bg-rose-500 h-full w-0 transition-all duration-200"></div>
+        </div>
+        <div class="flex justify-between text-[9px] text-slate-500 font-medium">
+          <span id="currentTime">0:00</span>
+          <span id="totalDuration">0:00</span>
+        </div>
+      </div>
+
+      <!-- Controles Multimedia -->
+      <div class="flex items-center justify-center gap-3 sm:gap-4 mt-2 text-slate-700">
+        <button onclick="prevTrack()" class="hover:text-rose-600 transition text-xs">
+          <i class="fa-solid fa-backward-step"></i>
+        </button>
+        <button onclick="togglePlay()" id="playBtn" class="w-8 h-8 rounded-full bg-white/70 hover:bg-white text-rose-500 shadow-sm flex items-center justify-center transition transform active:scale-95 text-xs">
+          <i class="fa-solid fa-play ml-0.5"></i>
+        </button>
+        <button onclick="nextTrack()" class="hover:text-rose-600 transition text-xs">
+          <i class="fa-solid fa-forward-step"></i>
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Elemento de Audio Oculto -->
-<audio id="bgAudio" preload="metadata"></audio>
+  <!-- Elemento de Audio Oculto -->
+  <audio id="bgAudio" preload="metadata"></audio>
+
+  <!-- CONTENEDOR PRINCIPAL DEL JUEGO -->
+  <main class="relative z-10 max-w-xl mx-auto w-full px-4 pt-44 pb-12 sm:py-8 my-auto">
+    
+    <!-- PANTALLA 1: BIENVENIDA -->
+    <section id="welcomeScreen" class="bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-rose-100 text-center space-y-6 transition-all duration-500">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-rose-100/70 text-rose-500 rounded-full text-3xl shadow-inner animate-pulse">
+        <i class="fa-solid fa-heart"></i>
+      </div>
+      <div>
+        <span class="text-xs uppercase tracking-widest text-rose-400 font-semibold">14 Años de Aventuras</span>
+        <h1 class="text-3xl font-bold text-slate-800 mt-1">Nuestra Historia de Amor</h1>
+      </div>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        Hola mi amor ❤️. Cada año juntos ha tenido risas, viajes, aprendizajes y momentos inolvidables. He preparado este pequeño juego con <strong>14 preguntas especiales</strong> (una por cada año). ¿Qué tanto recuerdas de todo lo que hemos vivido?
+      </p>
+      <div class="pt-2">
+        <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white font-semibold rounded-2xl shadow-lg shadow-rose-200 hover:shadow-rose-300 transition-all duration-300 transform hover:-translate-y-0.5">
+          Comenzar la Aventura <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- PANTALLA 2: CUESTIONARIO -->
+    <section id="quizScreen" class="hidden bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border border-rose-100 space-y-6 transition-all duration-500">
+      <!-- Barra de Progreso y Puntos -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center text-xs font-semibold">
+          <span class="text-rose-500 flex items-center gap-1.5">
+            <i class="fa-regular fa-calendar-check"></i> <span id="progressText">Pregunta 1 de 14</span>
+          </span>
+          <span class="bg-rose-100/70 text-rose-600 px-3 py-1 rounded-full text-[11px] shadow-sm">
+            <i class="fa-solid fa-star mr-1 text-amber-400"></i><span id="scoreText">0 Puntos</span>
+          </span>
+        </div>
+        <div class="w-full bg-rose-100 rounded-full h-2 overflow-hidden">
+          <div id="progressBar" class="bg-gradient-to-r from-rose-400 to-pink-500 h-2 rounded-full transition-all duration-500" style="width: 7%"></div>
+        </div>
+      </div>
+
+      <!-- Enunciado de la Pregunta -->
+      <div>
+        <span id="questionTag" class="text-[11px] uppercase tracking-wider font-bold text-purple-400 block mb-1">El Comienzo</span>
+        <h2 id="questionTitle" class="text-lg sm:text-xl font-bold text-slate-800 leading-snug"></h2>
+      </div>
+
+      <!-- Contenedor dinámico (Opción Múltiple o Parejas) -->
+      <div id="interactiveArea" class="space-y-3 min-h-[220px] flex flex-col justify-center"></div>
+
+      <!-- Retroalimentación / Mensaje tierno -->
+      <div id="feedbackText" class="min-h-[24px] text-xs text-center font-medium transition-opacity duration-300 opacity-0"></div>
+    </section>
+
+    <!-- PANTALLA 3: RESULTADO Y SORTEO DEL PREMIO -->
+    <section id="prizeScreen" class="hidden bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-rose-100 text-center space-y-6 transition-all duration-500">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-amber-100/80 text-amber-500 rounded-full text-3xl shadow-inner animate-bounce">
+        <i class="fa-solid fa-gift"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-slate-800">¡Lo completaste con éxito!</h2>
+        <p id="finalScoreMsg" class="text-xs text-rose-500 font-semibold mt-1"></p>
+      </div>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        Gracias por estos 14 años llenos de recuerdos, risas y momentos únicos a mi lado. Como recompensa, ¡tienes un premio especial asegurado! Toca el botón para revelar tu sorpresa:
+      </p>
+
+      <!-- Tarjeta Rasca y Revela / Caja Sorpresa -->
+      <div id="cardBox" class="relative max-w-sm mx-auto p-6 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow-lg shadow-rose-200 cursor-pointer transition-transform hover:scale-[1.02]" onclick="revealPrize()">
+        <div id="hiddenPrizeState">
+          <i class="fa-solid fa-box-open text-4xl mb-2 animate-pulse"></i>
+          <span class="block text-sm font-bold tracking-wide">Toca para descubrir tu premio</span>
+          <span class="text-[11px] text-rose-100">Hecho con mucho amor para ti</span>
+        </div>
+        <div id="revealedPrizeState" class="hidden space-y-2">
+          <span class="text-[11px] uppercase tracking-wider text-rose-100 font-bold">¡Premio Seleccionado!</span>
+          <h3 id="prizeName" class="text-xl font-extrabold text-white"></h3>
+          <p class="text-xs text-rose-100">Válido cuando tú elijas disfrutarlo juntos ❤️</p>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="restartQuiz()" class="text-xs text-slate-400 hover:text-rose-500 transition-colors">
+          <i class="fa-solid fa-rotate-left mr-1"></i> Volver a jugar
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center py-4 text-[11px] text-slate-400 z-10">
+    Hecho con ❤️ para Ivechi • 14 Años Juntos
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
