@@ -4,7 +4,9 @@ body {
   font-family: 'Quicksand', sans-serif;
 }
 
-/* Efecto corazones de fondo flotando suavemente */
+/* ==========================================
+   EFECTO CORAZONES FLOTANTES
+   ========================================== */
 .floating-heart {
   position: absolute;
   color: rgba(244, 63, 94, 0.15);
@@ -29,7 +31,9 @@ body {
   }
 }
 
-/* Opciones de respuesta */
+/* ==========================================
+   INTERACCIÓN DEL CUESTIONARIO
+   ========================================== */
 .option-btn {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -38,7 +42,6 @@ body {
   box-shadow: 0 4px 12px rgba(244, 63, 94, 0.12);
 }
 
-/* Estado de elementos de enlazar */
 .match-item {
   transition: all 0.2s ease;
   user-select: none;
@@ -55,7 +58,7 @@ body {
   pointer-events: none;
 }
 
-/* Animación sutil al revelar el premio */
+/* Animación tarjeta de premio */
 @keyframes prizeReveal {
   0% { transform: scale(0.9); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
@@ -64,22 +67,24 @@ body {
   animation: prizeReveal 0.5s ease-out forwards;
 }
 
-/* Efecto Glassmorphism del reproductor */
+/* ==========================================
+   TOCADISCOS / REPRODUCTOR VINILO
+   ========================================== */
 .player-card {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
-/* Disco de vinilo */
+/* Disco de vinilo con degradado concéntrico */
 .vinyl {
-  background: radial-gradient(circle, #2a2a2a 30%, #0d0d0d 70%, #000 100%);
+  background: radial-gradient(circle, #2a2a2a 28%, #111111 68%, #000000 100%);
   border: 2px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   transition: transform 0.5s ease;
 }
 
-/* Animación de giro */
+/* Animación de rotación continua */
 .vinyl.spinning {
   animation: spinVinyl 5s linear infinite;
 }
@@ -105,7 +110,7 @@ body {
   pointer-events: none;
 }
 
-/* Aguja colocada sobre el vinilo cuando está en reproducción */
+/* Aguja apoyada sobre el vinilo en reproducción */
 .tonearm.playing {
   transform: rotate(10deg);
 }
