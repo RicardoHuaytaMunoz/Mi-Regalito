@@ -324,7 +324,6 @@ function renderMatch(q, container) {
   selectedLeft = null;
 
   const wrapper = document.createElement("div");
-  // Grid uniforme con espacios definidos
   wrapper.className = "grid grid-cols-2 gap-4 sm:gap-8 w-full relative";
 
   // Capa SVG absoluta para dibujar las flechas de enlace
@@ -338,11 +337,11 @@ function renderMatch(q, container) {
   svgLayer.style.zIndex = "10";
   svgLayer.style.overflow = "visible";
   
-  // Definición de la cabeza de flecha
+  // Definición de la cabeza de flecha (Más fina y pequeña)
   svgLayer.innerHTML = `
     <defs>
-      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-        <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+      <marker id="arrowhead" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" fill="#10b981" />
       </marker>
     </defs>
   `;
@@ -358,7 +357,6 @@ function renderMatch(q, container) {
 
   q.pairs.forEach((pair) => {
     const lDiv = document.createElement("div");
-    // Tarjetas de emparejamiento grandes
     lDiv.className = "match-item p-4 sm:p-6 rounded-2xl bg-slate-50 border-2 border-slate-200 text-sm sm:text-base font-bold text-slate-700 cursor-pointer text-center shadow-sm transition-all flex items-center justify-center min-h-[80px]";
     lDiv.innerText = pair.left;
     lDiv.dataset.target = pair.right;
@@ -443,17 +441,17 @@ function drawSvgArrow(leftEl, rightEl) {
   const x1 = leftRect.right - containerRect.left;
   const y1 = leftRect.top + (leftRect.height / 2) - containerRect.top;
   
-  const x2 = rightRect.left - containerRect.left - 5; // -5 para dejar espacio a la flecha
+  const x2 = rightRect.left - containerRect.left - 6; // Espacio para que la punta no muerda el borde
   const y2 = rightRect.top + (rightRect.height / 2) - containerRect.top;
 
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   
-  // Curva Bezier elegante entre ambos botones
-  const d = `M ${x1} ${y1} C ${x1 + 40} ${y1}, ${x2 - 40} ${y2}, ${x2} ${y2}`;
+  // Curva Bezier más suave
+  const d = `M ${x1} ${y1} C ${x1 + 35} ${y1}, ${x2 - 35} ${y2}, ${x2} ${y2}`;
   
   path.setAttribute("d", d);
-  path.setAttribute("stroke", "#10b981");
-  path.setAttribute("stroke-width", "3.5");
+  path.setAttribute("stroke", "#10b981"); // Verde esmeralda
+  path.setAttribute("stroke-width", "2"); // Grosor reducido de 3.5 a 2
   path.setAttribute("fill", "transparent");
   path.setAttribute("marker-end", "url(#arrowhead)");
   path.setAttribute("stroke-linecap", "round");
