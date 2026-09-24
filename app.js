@@ -311,41 +311,47 @@ function selectChoice(option, btn, q) {
 // ==========================================
 let activeSvg = null;
 
+// Render: Opción Múltiple (Separadas y estilizadas)
+function renderChoice(q, container) {
+  const choiceWrapper = document.createElement("div");
+  choiceWrapper.className = "flex flex-col space-y-3 w-full py-1";
+
+  const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+
+  shuffled.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.innerText = opt.text;
+    btn.onclick = () => selectChoice(opt, btn, q);
+    choiceWrapper.appendChild(btn);
+  });
+
+  container.appendChild(choiceWrapper);
+}
+
+// Render: Emparejar / Enlazar (Preguntas 11 a 14 proporcionales y conectadas)
+let matchPairCounter = 0;
+
 function renderMatch(q, container) {
   currentMatchesCount = 0;
   selectedLeft = null;
+  matchPairCounter = 0;
 
-  const wrapper = document.createElement("div");
-  wrapper.className = "relative w-full py-2";
-
-  // SVG con punta de flecha integrada
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.className = "match-svg-canvas";
-  svg.innerHTML = `
-    <defs>
-      <marker id="arrowHead" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 1 L 9 5 L 0 9 z" fill="#10b981" />
-      </marker>
-    </defs>
-  `;
-  wrapper.appendChild(svg);
-  activeSvg = svg;
-
-  const grid = document.createElement("div");
-  grid.className = "grid grid-cols-2 gap-4 sm:gap-8 text-xs sm:text-sm";
+  const matchWrapper = document.createElement("div");
+  matchWrapper.className = "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 w-full py-1";
 
   const leftCol = document.createElement("div");
-  leftCol.className = "space-y-3";
+  leftCol.className = "flex flex-col space-y-2.5 sm:space-y-3";
   const rightCol = document.createElement("div");
-  rightCol.className = "space-y-3";
+  rightCol.className = "flex flex-col space-y-2.5 sm:space-y-3";
 
-  // Desordenar columna derecha
+  // Mezclar columna derecha
   const shuffledRight = [...q.pairs].sort(() => Math.random() - 0.5);
 
   q.pairs.forEach((pair, idx) => {
     const lDiv = document.createElement("div");
-    lDiv.className = "match-item p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-semibold text-slate-700 cursor-pointer text-center shadow-sm";
-    lDiv.innerText = pair.left;
+    lDiv.className = "match-item";
+    lDiv.innerHTML = `<span>${pair.left}</span>`;
     lDiv.dataset.target = pair.right;
     lDiv.onclick = () => handleLeftClick(lDiv);
     leftCol.appendChild(lDiv);
@@ -353,17 +359,16 @@ function renderMatch(q, container) {
 
   shuffledRight.forEach(pair => {
     const rDiv = document.createElement("div");
-    rDiv.className = "match-item p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-semibold text-slate-700 cursor-pointer text-center shadow-sm";
-    rDiv.innerText = pair.right;
+    rDiv.className = "match-item";
+    rDiv.innerHTML = `<span>${pair.right}</span>`;
     rDiv.dataset.text = pair.right;
     rDiv.onclick = () => handleRightClick(rDiv, q);
     rightCol.appendChild(rDiv);
   });
 
-  grid.appendChild(leftCol);
-  grid.appendChild(rightCol);
-  wrapper.appendChild(grid);
-  container.appendChild(wrapper);
+  matchWrapper.appendChild(leftCol);
+  matchWrapper.appendChild(rightCol);
+  container.appendChild(matchWrapper);
 }
 
 function handleLeftClick(el) {
@@ -378,14 +383,25 @@ function handleLeftClick(el) {
 function handleRightClick(el, q) {
   if (!selectedLeft || el.classList.contains("matched")) return;
 
-  // Validación correcta incluso con alternativas repetidas
+  // Validación exacta de la pareja
   if (selectedLeft.dataset.target === el.dataset.text) {
+    matchPairCounter++;
+    const pairId = matchPairCounter;
+
     selectedLeft.classList.remove("selected");
     selectedLeft.classList.add("matched");
     el.classList.add("matched");
 
-    // Dibujar la flecha conectora
-    drawConnectingArrow(selectedLeft, el);
+    // Añadir distintivo conector sincronizado (ej. [1] ➔ [1])
+    const leftBadge = document.createElement("span");
+    leftBadge.className = "match-badge";
+    leftBadge.innerHTML = `<i class="fa-solid fa-link mr-1 text-[10px]"></i>${pairId}`;
+    selectedLeft.appendChild(leftBadge);
+
+    const rightBadge = document.createElement("span");
+    rightBadge.className = "match-badge";
+    rightBadge.innerHTML = `<i class="fa-solid fa-check mr-1 text-[10px]"></i>${pairId}`;
+    el.appendChild(rightBadge);
 
     selectedLeft = null;
     currentMatchesCount++;
