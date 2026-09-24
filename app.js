@@ -180,7 +180,7 @@ const prizes = [
 ];
 
 // ==========================================
-// PLAYLIST (RUTAS ESTÁTICAS DIRECTAS)
+// PLAYLIST OPTIMIZADA (.MP3)
 // ==========================================
 const playlist = [
   {
@@ -228,7 +228,7 @@ const playlist = [
 ];
 
 // ==========================================
-// CONTROLADOR ROBUSTO DE AUDIO
+// CONTROLADOR DEL REPRODUCTOR
 // ==========================================
 let currentTrackIndex = 0;
 let audio = null;
@@ -245,9 +245,8 @@ function loadTrack(index) {
   if (titleEl) titleEl.innerText = track.title;
   if (artistEl) artistEl.innerText = track.artist;
   if (coverEl) coverEl.style.backgroundImage = `url('${track.cover}')`;
-  
+
   if (audio) {
-    audio.pause();
     audio.src = track.src;
     audio.load();
   }
@@ -255,17 +254,15 @@ function loadTrack(index) {
 
 function togglePlay() {
   if (!audio) return;
+
   if (audio.paused) {
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        if (vinylDisk) vinylDisk.classList.add("spinning");
-        if (tonearm) tonearm.classList.add("playing");
-        if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-      }).catch(error => {
-        console.warn("Autoplay prevenido por navegador. Requiere interacción manual:", error);
-      });
-    }
+    audio.play().then(() => {
+      if (vinylDisk) vinylDisk.classList.add("spinning");
+      if (tonearm) tonearm.classList.add("playing");
+      if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    }).catch(err => {
+      console.error("Error al reproducir audio:", err);
+    });
   } else {
     audio.pause();
     if (vinylDisk) vinylDisk.classList.remove("spinning");
@@ -311,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
   playBtn = document.getElementById("playBtn");
 
   if (audio) {
+    audio.preload = "auto";
     loadTrack(currentTrackIndex);
 
     audio.addEventListener("loadedmetadata", () => {
