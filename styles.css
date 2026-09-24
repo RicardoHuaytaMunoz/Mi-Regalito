@@ -76,7 +76,7 @@ body {
   -webkit-backdrop-filter: blur(14px);
 }
 
-/* Disco de vinilo con degradado concéntrico */
+/* Disco de vinilo */
 .vinyl {
   background: radial-gradient(circle, #2a2a2a 28%, #111111 68%, #000000 100%);
   border: 2px solid rgba(255, 255, 255, 0.15);
@@ -84,9 +84,9 @@ body {
   transition: transform 0.5s ease;
 }
 
-/* Animación de rotación continua */
+/* Animación de giro activa */
 .vinyl.spinning {
-  animation: spinVinyl 5s linear infinite;
+  animation: spinVinyl 4s linear infinite !important;
 }
 
 @keyframes spinVinyl {
@@ -110,7 +110,6 @@ body {
   pointer-events: none;
 }
 
-/* Aguja apoyada sobre el vinilo en reproducción */
 .tonearm.playing {
-  transform: rotate(10deg);
+  transform: rotate(8deg) !important;
 }
